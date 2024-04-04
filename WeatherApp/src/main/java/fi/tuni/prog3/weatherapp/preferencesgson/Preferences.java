@@ -43,6 +43,6 @@ public class Preferences {
         String currentLoc = this.currentLocation.getLat() + "," + this.currentLocation.getLon();
         String history = locationSearchHistory.toString();
         String favourites =  favouriteLocations.toString();
-        return String.format("current location:%s;location history:%s;favourite locations:%s",this.currentLocation,history,favourites);
+        return String.format("current location:%s;location history:%s;favourite locations:%s",currentLoc,history,favourites);
     }
 }
