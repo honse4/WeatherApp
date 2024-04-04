@@ -8,15 +8,24 @@ package fi.tuni.prog3.weatherapp.apigson.forecast;
  *
  * @author vasav
  */
-public class Rain {
-    private Double _1h;
+public class Temp {
+    private Double max;
+    private Double min;
 
-    public Double get1h() {
-        return _1h;
+    public Double getMax() {
+        return max;
     }
 
-    public void set1h(Double _1h) {
-        this._1h = _1h;
+    public void setMax(Double max) {
+        this.max = max;
+    }
+
+    public Double getMin() {
+        return min;
+    }
+
+    public void setMin(Double min) {
+        this.min = min;
     }
     
     

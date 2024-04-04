@@ -11,42 +11,14 @@ import java.util.List;
  * @author vasav
  */
 public class ForecastData {
-    private List<Weather> weather;
-    private Main main;
-    private Wind wind;
-    private Rain rain;
+    private List<Forecast> list;
 
-    public List<Weather> getWeather() {
-        return weather;
+    public List<Forecast> getList() {
+        return list;
     }
 
-    public void setWeather(List<Weather> weather) {
-        this.weather = weather;
-    }
-    
-    
-    public Main getMain() {
-        return this.main;
-    }
-    
-    public void setMain(Main main) {
-        this.main = main;
-    }
-    
-    public Wind getWind() {
-        return this.wind;
-    }
-    
-    public void setWind(Wind wind) {
-        this.wind = wind;
-    }
-    
-    public Rain getRain() {
-        return this.rain;
-    }
-    
-    public void setRain(Rain rain) {
-        this.rain = rain;
+    public void setList(List<Forecast> list) {
+        this.list = list;
     }
     
 }
