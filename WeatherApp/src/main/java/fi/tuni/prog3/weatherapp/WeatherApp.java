@@ -1,5 +1,11 @@
 package fi.tuni.prog3.weatherapp;
 
+import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
+import java.lang.reflect.Type;
+import java.util.List;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -21,6 +27,22 @@ public class WeatherApp extends Application {
 
     @Override
     public void start(Stage stage) {
+        
+        //remove later
+        Gson gson = new Gson();
+        WeatherApi api = new WeatherApi();
+        
+        String locationJson = api.lookUpLocation("London");
+         Type listType = new TypeToken<List<LocationData>>(){}.getType();
+        List<LocationData> data = gson.fromJson(locationJson, listType);
+        System.out.println(data.get(0).getLat() + " " + data.get(0).getLon());
+        
+        System.out.println();
+        String forecastJson = api.getCurrentWeather(51.5073219, -0.1276474);
+        ForecastData fdata = gson.fromJson(forecastJson, ForecastData.class);
+        System.out.println();
+//        System.out.println();
+//        System.out.println(api.getForecast(0, 0));
 
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
