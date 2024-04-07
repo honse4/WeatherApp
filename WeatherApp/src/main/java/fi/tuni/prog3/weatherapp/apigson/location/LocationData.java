@@ -9,11 +9,6 @@ package fi.tuni.prog3.weatherapp.apigson.location;
  * @author vasav
  */
 public class LocationData {
-<<<<<<< HEAD
-    private Double lat;
-    private Double lon;
-    
-=======
     
     private Double lat;
     
@@ -21,7 +16,6 @@ public class LocationData {
     
     public LocationData() {}
     
->>>>>>> feature-json-write-read
     public Double getLat() {
         return this.lat;
     }
@@ -37,14 +31,9 @@ public class LocationData {
     public void setLon(Double lon) {
         this.lon = lon;
     }
-<<<<<<< HEAD
-}
-=======
-    
+
     @Override
     public String toString() {
         return "(" + this.lat + "," + this.lon + ")";
     }
 }
-
->>>>>>> feature-json-write-read
