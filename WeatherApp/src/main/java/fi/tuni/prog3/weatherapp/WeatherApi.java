@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package fi.tuni.prog3.weatherapp;
 
 import java.io.BufferedReader;
@@ -14,22 +10,6 @@ import java.net.URL;
  *
  * @author vasav
  */
-
-// How to use
-//        Gson gson = new Gson();
-//        WeatherApi api = new WeatherApi();
-//        
-//        String locationJson = api.lookUpLocation("London");
-//         import these : import com.google.gson.reflect.TypeToken; and import java.lang.reflect.Type;
-//         Type listType = new TypeToken<List<LocationData>>(){}.getType();
-//        List<LocationData> ldata = gson.fromJson(locationJson, listType);
-//        
-//        String weatherJson = api.getCurrentWeather(51.5073219, -0.1276474);
-//        WeatherData wdata = gson.fromJson(weatherJson, WeatherData.class);
-//        
-//        String forecastJson = api.getForecast(51.5073219, -0.1276474);
-//        ForecastData fdata = gson.fromJson(forecastJson, ForecastData.class);
-
 public class WeatherApi implements iAPI{
     private final static String API_ID = "2bcb8cfeeba3f4072f586ab0d2b40b2b";
     private final static String URL_WEATHER = "https://api.openweathermap.org/data/2.5/weather?";
