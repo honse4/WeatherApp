@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 /**
@@ -35,12 +36,13 @@ public class SearchBar extends VBox {
 
         loading.setAlignment(Pos.CENTER);
         
-        searchbar.setMinSize(300,30);
-        searchbar.setStyle("-fx-border-color: transparent;");
+        searchbar.setMinSize(320,30);
+        searchbar.setStyle("-fx-border-color: transparent; -fx-border-width: 0; -fx-background-color:transparent;"
+                + "-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-font-size: 14px;");
         
         error.setAlignment(Pos.CENTER);
         error.setMinWidth(200);
-        
+        error.setStyle("-fx-text-fill: #ff0000;");
         
         getChildren().addAll(getBackButton(), getVBox(),getFavourites());
         setSpacing(50);
@@ -53,14 +55,21 @@ public class SearchBar extends VBox {
     }
     
     private Button getBackButton() {
-        Button back = new Button("<-");
+        SVGPath leftArrow = new SVGPath();
+        leftArrow.setContent("M 20,0 L 8,12 L 20,24 L 20,16 L 32,16 L 32,8 L 20,8 L 20,0 Z");
+        leftArrow.setScaleX(0.75);  
+        leftArrow.setScaleY(0.75);
+        
+        Button back = new Button();
+        back.setAlignment(Pos.CENTER);
+        back.setGraphic(leftArrow);
+        back.setMaxSize(50,30);
         back.setFocusTraversable(false);
-        back.setMinWidth(40);
+        back.setMinSize(50,30);
         
         back.setOnAction(e -> {
             searchbar.setText("");
             error.setText("");
-            searchbar.requestFocus();
             stage.setScene(scene);
             scene.getRoot().requestFocus();    
         });
@@ -69,8 +78,17 @@ public class SearchBar extends VBox {
     }
     
     private VBox getVBox() {
+        //
+        SVGPath magnifyingGlass = new SVGPath();
+        magnifyingGlass.setContent("M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z");
+        magnifyingGlass.setScaleX(0.035);  
+        magnifyingGlass.setScaleY(0.035);
+        
         Button searchButton = new Button();
-        searchButton.setMinSize(50,30);
+        searchButton.setGraphic(magnifyingGlass);
+        searchButton.setMinSize(50,40);
+        searchButton.setFocusTraversable(false);
+        searchButton.setStyle("-fx-background-radius: 0 20 20 0;");
         
         searchButton.setOnAction(e -> {
             onClick();
@@ -89,9 +107,9 @@ public class SearchBar extends VBox {
         HBox searchRow = new HBox(searchbar, searchButton);
         searchRow.setSpacing(0);
         searchRow.setAlignment(Pos.CENTER);
-        searchRow.setStyle("-fx-border-color: #a0a0a0;"
-                + "-fx-border-radius: 20; -fx-padding: 5; -fx-border-width: 1;");
-        searchRow.setMaxWidth(400);
+        searchRow.setStyle("-fx-border-color: #a0a0a0; -fx-padding: 0 0 0 5;"
+                + "-fx-border-radius: 20; -fx-border-width: 1;");
+        searchRow.setMaxSize(375, 40);
         
         VBox topRow = new VBox(searchRow, error);
         topRow.setSpacing(5);
@@ -108,7 +126,7 @@ public class SearchBar extends VBox {
         
         getChildren().add(2, loading);
         
-        //ai
+        //
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
@@ -119,7 +137,6 @@ public class SearchBar extends VBox {
             protected void succeeded() {
                 Boolean result = getValue();
                 if (result) {
-                    searchbar.requestFocus();
                     stage.setScene(scene);
                     scene.getRoot().requestFocus();
                 } else {
@@ -133,6 +150,7 @@ public class SearchBar extends VBox {
     
     private VBox getFavourites() {
         Label title = new Label("Favourites");
+        title.setStyle("-fx-font-size: 14px;-fx-font-family: Helvetica;");
         VBox favourites = new VBox(title);
         favourites.setAlignment(Pos.CENTER);
         return favourites;

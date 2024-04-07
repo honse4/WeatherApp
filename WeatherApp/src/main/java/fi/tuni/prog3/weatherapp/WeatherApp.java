@@ -27,10 +27,13 @@ import javafx.scene.control.TextField;
  * JavaFX Weather Application.
  */
 public class WeatherApp extends Application {
+    private WeatherApi api;
+    private Gson gson ;
 
     @Override
     public void start(Stage stage) {
-        
+        this.api = new WeatherApi();
+        this.gson = new Gson();
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -108,9 +111,9 @@ public class WeatherApp extends Application {
         Scene searchScene = new Scene(search, 500, 700);
         
         TextField searchBar = new TextField();
-        searchBar.setMaxWidth(100);
-        searchBar.setMinWidth(75);
-        searchBar.setPromptText("Search");
+        searchBar.setMaxWidth(125);
+        searchBar.setMinSize(100, 20);
+        searchBar.setPromptText("Search a location");
         
         searchBar.setOnMouseClicked(e -> {   
             stage.setScene(searchScene);
@@ -125,7 +128,9 @@ public class WeatherApp extends Application {
             WeatherData wdata = weatherSearch(ldata);
             ForecastData fdata = forecastSearch(ldata);
             
-            // Do stuff with the data
+            // These objects should contain everything needed to display the information.
+            // Maybe make some of the containers into attributes so you can change their content
+            // from here.
             
             return true;
         } catch (Exception e) {
@@ -135,34 +140,22 @@ public class WeatherApp extends Application {
     }
     
     private LocationData locationSearch(String location) {
-        WeatherApi api = new WeatherApi();
-        Gson gson = new Gson();
-        
         Type listType = new TypeToken<List<LocationData>>(){}.getType();
         List<LocationData> ldata = gson.fromJson(api.lookUpLocation(location), listType);
-        System.out.println(ldata.get(0).getLat() + " " + ldata.get(0).getLon());
-        
+       
         return ldata.get(0);
     }
     
     private WeatherData weatherSearch(LocationData ldata) {
-        WeatherApi api = new WeatherApi();
-        Gson gson = new Gson();
-        
         WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
                 ldata.getLon()), WeatherData.class);
-        System.out.println(wdata.getMain().getTemp());
         
         return wdata;
     }
     
     private ForecastData forecastSearch(LocationData ldata) {
-        WeatherApi api = new WeatherApi();
-        Gson gson = new Gson();
-        
         ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
                 ldata.getLon()), ForecastData.class);
-        System.out.println(fdata.getList().get(0).getTemp().getMax());
         
         return fdata;
     }
