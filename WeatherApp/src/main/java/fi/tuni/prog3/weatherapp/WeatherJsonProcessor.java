@@ -3,13 +3,10 @@ package fi.tuni.prog3.weatherapp;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -36,15 +33,20 @@ public class WeatherJsonProcessor implements iReadAndWriteToFile {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(fileName);
-            gson.toJson(preferences, writer);
+            gson.toJson(this.preferences, writer);
             writer.close();
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }
     
     public Preferences getPreferences() {
         return preferences;
+    }
+
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 }
