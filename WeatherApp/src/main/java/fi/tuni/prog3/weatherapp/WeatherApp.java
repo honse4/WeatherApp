@@ -139,6 +139,11 @@ public class WeatherApp extends Application {
         
     }
     
+    /**
+     * api call to get the latitude and longitude for a location
+     * @param location String which has the name of the location
+     * @return LocationData
+     */
     private LocationData locationSearch(String location) {
         Type listType = new TypeToken<List<LocationData>>(){}.getType();
         List<LocationData> ldata = gson.fromJson(api.lookUpLocation(location), listType);
@@ -146,6 +151,11 @@ public class WeatherApp extends Application {
         return ldata.get(0);
     }
     
+    /**
+     * api call to get the current weather
+     * @param ldata LocationData which has the latitude and longitude
+     * @return WeatherData
+     */
     private WeatherData weatherSearch(LocationData ldata) {
         WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
                 ldata.getLon()), WeatherData.class);
@@ -153,6 +163,11 @@ public class WeatherApp extends Application {
         return wdata;
     }
     
+    /**
+     * api call to get the forecast
+     * @param ldata LocationData which has the latitude and longitude
+     * @return ForecastData
+     */
     private ForecastData forecastSearch(LocationData ldata) {
         ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
                 ldata.getLon()), ForecastData.class);
