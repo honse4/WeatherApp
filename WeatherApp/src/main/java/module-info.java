@@ -5,4 +5,6 @@ module fi.tuni.progthree.weatherapp {
     opens fi.tuni.prog3.weatherapp.apigson.weather to com.google.gson;
     opens fi.tuni.prog3.weatherapp.apigson.location to com.google.gson;
     requires com.google.gson;
+    opens fi.tuni.prog3.weatherapp.preferencesgson to com.google.gson;
+    opens fi.tuni.prog3.weatherapp.apigson.location to com.google.gson;
 }
