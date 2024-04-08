@@ -18,7 +18,6 @@ import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
-import fi.tuni.prog3.weatherapp.components.Favourite;
 import java.lang.reflect.Type;
 import java.util.List;
 import javafx.scene.control.TextField;
@@ -48,14 +47,10 @@ public class WeatherApp extends Application {
         root.setBottom(quitButton);
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
         
-        Scene scene = new Scene(root, 500, 700);
-       
-        
+        Scene scene = new Scene(root, 500, 700);     
         TextField searchBar = getSearchBar(stage, scene);
-        HBox top = new HBox(searchBar, new Favourite());
-        top.setAlignment(Pos.TOP_RIGHT);
-        root.setTop(top);
-        BorderPane.setAlignment(top, Pos.TOP_RIGHT);
+        root.setTop(searchBar);
+        BorderPane.setAlignment(searchBar, Pos.TOP_RIGHT);
         
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
@@ -110,6 +105,12 @@ public class WeatherApp extends Application {
         return button;
     }
     
+    /**
+     * Gets placeholder search bar which redirects to search page
+     * @param stage Primary stage 
+     * @param scene The main scene
+     * @return TextField
+     */
     private TextField getSearchBar(Stage stage, Scene scene) {
         SearchBar search = new SearchBar(stage, scene, this);
         Scene searchScene = new Scene(search, 500, 700);
@@ -126,6 +127,11 @@ public class WeatherApp extends Application {
         return searchBar;
     }
     
+    /**
+     * 
+     * @param location
+     * @return 
+     */
     public boolean searchResult(String location) {
         try {
             LocationData ldata = locationSearch(location);
