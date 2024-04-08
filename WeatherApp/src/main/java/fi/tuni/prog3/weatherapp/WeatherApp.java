@@ -31,7 +31,7 @@ public class WeatherApp extends Application {
     private Gson gson ;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
         this.api = new WeatherApi();
         this.gson = new Gson();
         //Creating a new BorderPane.
@@ -111,7 +111,7 @@ public class WeatherApp extends Application {
      * @param scene The main scene
      * @return TextField
      */
-    private TextField getSearchBar(Stage stage, Scene scene) {
+    private TextField getSearchBar(Stage stage, Scene scene) throws Exception {
         SearchBar search = new SearchBar(stage, scene, this);
         Scene searchScene = new Scene(search, 500, 700);
         

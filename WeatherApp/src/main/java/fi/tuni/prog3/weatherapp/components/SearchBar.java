@@ -1,6 +1,11 @@
 package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
+import fi.tuni.prog3.weatherapp.WeatherJsonProcessor;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import java.io.FileNotFoundException;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,7 +37,7 @@ public class SearchBar extends VBox {
      * @param scene Main scene presented to user
      * @param main WeatherApp class used for a method call
      */
-    public SearchBar(Stage stage, Scene scene, WeatherApp main) {
+    public SearchBar(Stage stage, Scene scene, WeatherApp main) throws Exception {
         this.stage = stage;
         this.scene = scene;
         this.main = main;
@@ -50,7 +55,7 @@ public class SearchBar extends VBox {
         error.setMinWidth(200);
         error.setStyle("-fx-text-fill: #ff0000;");
         
-        getChildren().addAll(getBackButton(), getVBox(),getFavourites());
+        getChildren().addAll(getBackButton(), getVBox(),getFavourites(), getSavedSearches());
         setSpacing(50);
         
         setOnKeyPressed(e -> {
@@ -184,4 +189,20 @@ public class SearchBar extends VBox {
         favourites.setAlignment(Pos.CENTER);
         return favourites;
     }
+    
+    private VBox getSavedSearches() throws Exception {
+        WeatherJsonProcessor processor = new WeatherJsonProcessor();
+        String filename = "preferencesTestIn.json";
+        try {
+            Preferences preferences = processor.readFromFile(filename);
+            SavedSearches saves = new SavedSearches(stage, scene, main, preferences);
+            
+            VBox favourites = new VBox(saves);
+            favourites.setAlignment(Pos.CENTER);
+            return favourites;
+        }catch (FileNotFoundException e) {
+            return null;
+        } 
+    }
+    
 }

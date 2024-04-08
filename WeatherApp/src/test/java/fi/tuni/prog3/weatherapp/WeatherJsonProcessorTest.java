@@ -65,7 +65,7 @@ public class WeatherJsonProcessorTest {
                 "current location:(61.49802,23.760317);"
                 + "location history:[(60.1756,24.9342), (61.49802,23.760317)];"
                 + "favourite locations:[(65.0121,25.4651)]";
-        String result = instance.readFromFile(fileName);
+        String result = instance.readFromFile(fileName).toString();
         assertEquals(expResult, result);
     }
 

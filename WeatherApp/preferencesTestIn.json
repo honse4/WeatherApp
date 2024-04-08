@@ -1,20 +1,24 @@
 {
   "currentLocation": {
+    "name": "Tampere",
     "lat": 61.498020,
     "lon": 23.760317
   },
   "locationSearchHistory": [
     {
+      "name": "Helsinki",
       "lat": 60.1756,
       "lon": 24.9342
     },
     {
+      "name": "Tampere",
       "lat": 61.498020,
       "lon": 23.760317
     }
   ],
   "favouriteLocations": [
     {
+      "name": "Oulu",
       "lat": 65.0121,
       "lon": 25.4651
     }

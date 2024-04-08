@@ -18,11 +18,11 @@ public class WeatherJsonProcessor implements iReadAndWriteToFile {
     private Preferences preferences;
 
     @Override
-    public String readFromFile(String fileName) throws Exception {
+    public Preferences readFromFile(String fileName) throws Exception {
         Gson gson = new Gson();
         try {
             preferences = gson.fromJson(new FileReader(fileName), Preferences.class);
-            return preferences.toString();
+            return preferences;
         } catch (FileNotFoundException e) {
             return null;
         }

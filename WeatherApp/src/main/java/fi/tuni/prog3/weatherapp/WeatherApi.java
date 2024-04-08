@@ -1,5 +1,6 @@
 package fi.tuni.prog3.weatherapp;
 
+import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -10,6 +10,9 @@ public class LocationData {
     
     private Double lon;
     
+    private String name;
+
+    
     public LocationData() {}
     
     public Double getLat() {
@@ -26,6 +29,14 @@ public class LocationData {
     
     public void setLon(Double lon) {
         this.lon = lon;
+    }
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
