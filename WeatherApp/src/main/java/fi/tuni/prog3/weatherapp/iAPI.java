@@ -27,4 +27,12 @@ public interface iAPI {
      * @return String.
      */
     public String getForecast(double lat, double lon);
+    
+    /**
+     * Returns hourly forecast for the given coordinates
+     * @param lat The latitude of the location
+     * @param lon The longitude of the location
+     * @return String
+     */
+    public String getHourlyForecast(double lat, double lon);
 }
