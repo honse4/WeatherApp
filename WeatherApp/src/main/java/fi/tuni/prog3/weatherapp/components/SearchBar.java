@@ -1,12 +1,15 @@
 package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
+import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -25,6 +28,8 @@ public class SearchBar extends VBox {
     private final TextField searchbar;
     private final Label error;
     private final HBox loading ;
+    private final Preferences preferences;
+    private final VBox favourites;
     
     /**
      * Constructor for the search bar.
@@ -39,6 +44,10 @@ public class SearchBar extends VBox {
         this.searchbar = new TextField();
         this.error = new Label("");
         this.loading = new HBox(new Label("Loading..."));
+        this.favourites = new VBox();
+        this.preferences = new Preferences(); // Temporary fix
+        
+        favourites.setAlignment(Pos.CENTER);
 
         loading.setAlignment(Pos.CENTER);
         
@@ -174,14 +183,57 @@ public class SearchBar extends VBox {
     }
     
     /**
-     * 
-     * @return 
+     * Uses the favorites stored in memory and displays them
+     * @return ScrollPane
      */
-    private VBox getFavourites() {
-        Label title = new Label("Favourites");
-        title.setStyle("-fx-font-size: 14px;-fx-font-family: Helvetica;");
-        VBox favourites = new VBox(title);
-        favourites.setAlignment(Pos.CENTER);
-        return favourites;
+    private ScrollPane getFavourites() {
+        
+        if (preferences.getFavouriteLocations() != null) {
+            for (LocationData data: preferences.getFavouriteLocations()) {
+                 addFavourite(data);
+            }
+        }
+        else {
+            favourites.getChildren().add(new Label("No favourites added yet"));
+        }
+        
+        ScrollPane favouritesContainer = new ScrollPane();
+        favouritesContainer.setFitToHeight(true);
+        favouritesContainer.setFitToWidth(true);
+        favouritesContainer.setContent(favourites);
+        
+        VBox.setMargin(favouritesContainer, new Insets(0, 30,100,30));
+        return favouritesContainer;
+    }
+    
+    /**
+     * Adds a favorite
+     * @param data LocationData of the favorite
+     */
+    public void addFavourite(LocationData data) {
+        favourites.getChildren().removeIf(node -> node instanceof Label);
+        Label name = new Label(data.getName());
+        Label state = new Label(data.getState()); 
+            
+        HBox row = new HBox(name, state);
+        row.setSpacing(10);
+        row.setId(data.getName() + data.getState());
+            
+        Button delete = new Button("X");
+        delete.setOnAction(e -> {
+            deleteFavourite(data);
+        });
+            
+        row.getChildren().add(delete);
+        favourites.getChildren().add(row);
+    }
+    
+    /**
+     * Deletes a favorite
+     * @param data LocationData of the favorite
+     */
+    public void deleteFavourite(LocationData data) {
+        favourites.getChildren().removeIf(node -> node.getId().equals(data.getName()+data.getState()));
+        preferences.getFavouriteLocations().remove(data);
     }
 }
