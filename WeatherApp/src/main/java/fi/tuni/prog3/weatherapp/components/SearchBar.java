@@ -195,7 +195,7 @@ public class SearchBar extends VBox {
         String filename = "preferencesTestIn.json";
         try {
             Preferences preferences = processor.readFromFile(filename);
-            SavedSearches saves = new SavedSearches(stage, scene, main, preferences);
+            SavedSearches saves = new SavedSearches(stage, scene, main, searchbar,preferences);
             
             VBox favourites = new VBox(saves);
             favourites.setAlignment(Pos.CENTER);
