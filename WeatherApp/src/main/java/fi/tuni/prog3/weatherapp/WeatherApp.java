@@ -32,6 +32,7 @@ public class WeatherApp extends Application {
 
     private WeatherApi api;
     private Gson gson;
+    private CurrentWeatherDisplay currentWeatherBox;
 
     @Override
     public void start(Stage stage) throws FileNotFoundException {
@@ -130,7 +131,9 @@ public class WeatherApp extends Application {
             LocationData ldata = locationSearch(location);
             WeatherData wdata = weatherSearch(ldata);
             ForecastData fdata = forecastSearch(ldata);
-
+            
+            currentWeatherBox.updateValues(ldata, wdata);
+            
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
             // from here.
@@ -164,7 +167,7 @@ public class WeatherApp extends Application {
     }
 
     private VBox getCurrentWeatherBox() throws FileNotFoundException {
-       CurrentWeatherDisplay currentWeatherBox = new CurrentWeatherDisplay();
+       currentWeatherBox = new CurrentWeatherDisplay();
        return currentWeatherBox.getCurrentWeatherDisplay();
         
     }
