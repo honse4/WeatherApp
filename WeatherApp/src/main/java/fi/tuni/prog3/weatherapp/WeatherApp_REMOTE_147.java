@@ -2,7 +2,6 @@ package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
 import fi.tuni.prog3.weatherapp.components.SearchBar;
-import fi.tuni.prog3.weatherapp.components.CurrentWeatherDisplay;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -19,7 +18,6 @@ import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
-import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
 import java.util.List;
 import javafx.scene.control.TextField;
@@ -29,13 +27,11 @@ import javafx.scene.control.TextField;
  * JavaFX Weather Application.
  */
 public class WeatherApp extends Application {
-
     private WeatherApi api;
-    private Gson gson;
-    private CurrentWeatherDisplay currentWeatherBox;
+    private Gson gson ;
 
     @Override
-    public void start(Stage stage) throws FileNotFoundException {
+    public void start(Stage stage) {
         this.api = new WeatherApi();
         this.gson = new Gson();
         //Creating a new BorderPane.
@@ -55,7 +51,7 @@ public class WeatherApp extends Application {
         TextField searchBar = getSearchBar(stage, scene);
         root.setTop(searchBar);
         BorderPane.setAlignment(searchBar, Pos.TOP_RIGHT);
-
+        
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
         stage.show();
@@ -65,12 +61,12 @@ public class WeatherApp extends Application {
         launch();
     }
 
-    private VBox getCenterVBox() throws FileNotFoundException {
+    private VBox getCenterVBox() {
         //Creating an HBox.
         VBox centerHBox = new VBox(10);
 
         //Adding two VBox to the HBox.
-        centerHBox.getChildren().addAll(getCurrentWeatherBox(),getTopHBox(), getBottomHBox() );
+        centerHBox.getChildren().addAll(getTopHBox(), getBottomHBox());
 
         return centerHBox;
     }
@@ -108,7 +104,6 @@ public class WeatherApp extends Application {
 
         return button;
     }
-
     
     /**
      * Gets placeholder search bar which redirects to search page
@@ -119,16 +114,16 @@ public class WeatherApp extends Application {
     private TextField getSearchBar(Stage stage, Scene scene) {
         SearchBar search = new SearchBar(stage, scene, this);
         Scene searchScene = new Scene(search, 500, 700);
-
+        
         TextField searchBar = new TextField();
         searchBar.setMaxWidth(125);
         searchBar.setMinSize(100, 20);
         searchBar.setPromptText("Search a location");
-
-        searchBar.setOnMouseClicked(e -> {
+        
+        searchBar.setOnMouseClicked(e -> {   
             stage.setScene(searchScene);
         });
-
+        
         return searchBar;
     }
     
@@ -143,16 +138,15 @@ public class WeatherApp extends Application {
             WeatherData wdata = weatherSearch(ldata);
             ForecastData fdata = forecastSearch(ldata);
             
-            currentWeatherBox.updateValues(ldata, wdata);
-            
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
             // from here.
+            
             return true;
         } catch (Exception e) {
             return false;
         }
-
+        
     }
     
     /**
@@ -161,10 +155,9 @@ public class WeatherApp extends Application {
      * @return LocationData
      */
     private LocationData locationSearch(String location) {
-        Type listType = new TypeToken<List<LocationData>>() {
-        }.getType();
+        Type listType = new TypeToken<List<LocationData>>(){}.getType();
         List<LocationData> ldata = gson.fromJson(api.lookUpLocation(location), listType);
-
+       
         return ldata.get(0);
     }
     
@@ -176,7 +169,7 @@ public class WeatherApp extends Application {
     private WeatherData weatherSearch(LocationData ldata) {
         WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
                 ldata.getLon()), WeatherData.class);
-
+        
         return wdata;
     }
     
@@ -188,13 +181,7 @@ public class WeatherApp extends Application {
     private ForecastData forecastSearch(LocationData ldata) {
         ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
                 ldata.getLon()), ForecastData.class);
-
-        return fdata;
-    }
-
-    private VBox getCurrentWeatherBox() throws FileNotFoundException {
-       currentWeatherBox = new CurrentWeatherDisplay();
-       return currentWeatherBox.getCurrentWeatherDisplay();
         
+        return fdata;
     }
 }

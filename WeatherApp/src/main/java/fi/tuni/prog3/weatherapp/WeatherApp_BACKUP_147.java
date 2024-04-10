@@ -50,8 +50,14 @@ public class WeatherApp extends Application {
         BorderPane.setMargin(quitButton, new Insets(10, 10, 0, 10));
         root.setBottom(quitButton);
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
+<<<<<<< HEAD
+
+        Scene scene = new Scene(root, 500, 700);
+
+=======
         
         Scene scene = new Scene(root, 500, 700);     
+>>>>>>> main
         TextField searchBar = getSearchBar(stage, scene);
         root.setTop(searchBar);
         BorderPane.setAlignment(searchBar, Pos.TOP_RIGHT);
@@ -108,7 +114,9 @@ public class WeatherApp extends Application {
 
         return button;
     }
+<<<<<<< HEAD
 
+=======
     
     /**
      * Gets placeholder search bar which redirects to search page
@@ -116,6 +124,7 @@ public class WeatherApp extends Application {
      * @param scene The main scene
      * @return TextField
      */
+>>>>>>> main
     private TextField getSearchBar(Stage stage, Scene scene) {
         SearchBar search = new SearchBar(stage, scene, this);
         Scene searchScene = new Scene(search, 500, 700);
@@ -131,12 +140,16 @@ public class WeatherApp extends Application {
 
         return searchBar;
     }
+<<<<<<< HEAD
+
+=======
     
     /**
      * 
      * @param location
      * @return 
      */
+>>>>>>> main
     public boolean searchResult(String location) {
         try {
             LocationData ldata = locationSearch(location);
@@ -154,12 +167,16 @@ public class WeatherApp extends Application {
         }
 
     }
+<<<<<<< HEAD
+
+=======
     
     /**
      * api call to get the latitude and longitude for a location
      * @param location String which has the name of the location
      * @return LocationData
      */
+>>>>>>> main
     private LocationData locationSearch(String location) {
         Type listType = new TypeToken<List<LocationData>>() {
         }.getType();
@@ -167,24 +184,32 @@ public class WeatherApp extends Application {
 
         return ldata.get(0);
     }
+<<<<<<< HEAD
+
+=======
     
     /**
      * api call to get the current weather
      * @param ldata LocationData which has the latitude and longitude
      * @return WeatherData
      */
+>>>>>>> main
     private WeatherData weatherSearch(LocationData ldata) {
         WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
                 ldata.getLon()), WeatherData.class);
 
         return wdata;
     }
+<<<<<<< HEAD
+
+=======
     
     /**
      * api call to get the forecast
      * @param ldata LocationData which has the latitude and longitude
      * @return ForecastData
      */
+>>>>>>> main
     private ForecastData forecastSearch(LocationData ldata) {
         ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
                 ldata.getLon()), ForecastData.class);

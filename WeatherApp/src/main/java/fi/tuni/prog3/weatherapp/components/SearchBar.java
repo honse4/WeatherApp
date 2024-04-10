@@ -26,6 +26,12 @@ public class SearchBar extends VBox {
     private final Label error;
     private final HBox loading ;
     
+    /**
+     * Constructor for the search bar.
+     * @param stage Stage used by javaFx
+     * @param scene Main scene presented to user
+     * @param main WeatherApp class used for a method call
+     */
     public SearchBar(Stage stage, Scene scene, WeatherApp main) {
         this.stage = stage;
         this.scene = scene;
@@ -54,6 +60,10 @@ public class SearchBar extends VBox {
         });
     }
     
+    /**
+     * Creates the button used to go back to the main scene
+     * @return Button 
+     */
     private Button getBackButton() {
         SVGPath leftArrow = new SVGPath();
         leftArrow.setContent("M 20,0 L 8,12 L 20,24 L 20,16 L 32,16 L 32,8 L 20,8 L 20,0 Z");
@@ -77,6 +87,10 @@ public class SearchBar extends VBox {
         return back;
     }
     
+    /**
+     * Adds the top row to a VBox
+     * @return VBox
+     */
     private VBox getVBox() {
         //
         SVGPath magnifyingGlass = new SVGPath();
@@ -103,6 +117,14 @@ public class SearchBar extends VBox {
         return container;
     }
     
+    /**
+     * Creates a HBox within a VBox that contains the search bar and button as
+     * well as the error label
+     * @param searchbar TextField where the user searches location
+     * @param searchButton Button which submits the search
+     * @param error Label which can show any errors
+     * @return VBox 
+     */
     private VBox getTopRow(TextField searchbar, Button searchButton, Label error) {
         HBox searchRow = new HBox(searchbar, searchButton);
         searchRow.setSpacing(0);
@@ -118,8 +140,11 @@ public class SearchBar extends VBox {
         return topRow;
     }
     
+    /**
+     * Function called by the search button. Uses a task to create a separate thread
+     * for the api call and the main thread continues the other code. 
+     */
     private void onClick() {
-        
         String search = searchbar.getText();
         searchbar.setText("");
         error.setText("");
@@ -148,6 +173,10 @@ public class SearchBar extends VBox {
         new Thread(task).start();   
     }
     
+    /**
+     * 
+     * @return 
+     */
     private VBox getFavourites() {
         Label title = new Label("Favourites");
         title.setStyle("-fx-font-size: 14px;-fx-font-family: Helvetica;");
