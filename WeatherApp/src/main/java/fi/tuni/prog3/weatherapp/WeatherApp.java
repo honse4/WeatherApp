@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import javafx.scene.control.TextField;
 
@@ -134,6 +135,7 @@ public class WeatherApp extends Application {
             WeatherData weatherData = dataGetter.weatherSearch(locationData);
             ForecastData forecastData = dataGetter.forecastSearch(locationData);
             HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
