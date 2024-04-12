@@ -2,6 +2,7 @@ package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.WeatherJsonProcessor;
+import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.io.FileNotFoundException;
 //import java.util.logging.Level;
@@ -29,7 +30,8 @@ public class SearchBar extends VBox {
     private final WeatherApp main;
     private final TextField searchbar;
     private final Label error;
-    private final HBox loading ;
+    private final HBox loading;
+    private SavedSearches savedSearches;
     
     /**
      * Constructor for the search bar.
@@ -160,7 +162,12 @@ public class SearchBar extends VBox {
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
-                return main.searchResult(search); 
+                LocationData result = main.searchResult(search);
+                if (result != null) {
+                    savedSearches.addLocationIntoHistory(result);
+                    return true;
+                }
+                return false;            
             }
 
             @Override
@@ -195,9 +202,9 @@ public class SearchBar extends VBox {
         String filename = "preferencesTestIn.json";
         try {
             Preferences preferences = processor.readFromFile(filename);
-            SavedSearches saves = new SavedSearches(stage, scene, main, searchbar,preferences);
+            savedSearches = new SavedSearches(stage, scene, main, searchbar,preferences);
             
-            VBox favourites = new VBox(saves);
+            VBox favourites = new VBox(savedSearches);
             favourites.setAlignment(Pos.CENTER);
             return favourites;
         }catch (FileNotFoundException e) {
