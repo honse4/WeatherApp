@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit5TestClass.java to edit this template
- */
 package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
@@ -14,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
+import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -24,15 +22,13 @@ import java.util.Objects;
  *
  * @author vasav
  */
-public class WeatherApiTest {
-    private static Gson gson;
-    
+public class WeatherApiTest {   
     public WeatherApiTest() {
     }
     
     @BeforeAll
     public static void setUpClass() {
-        gson = new Gson();
+        
     }
     
     @AfterAll
@@ -61,14 +57,14 @@ public class WeatherApiTest {
         assertTrue(result.contains(loc));
         
         try {
+            Gson gson = new Gson();
             Type listType = new TypeToken<List<LocationData>>(){}.getType();
             List<LocationData> ldata = gson.fromJson(result, listType);
             assertTrue(Objects.equals(lat, ldata.get(0).getLat()));
             assertTrue(Objects.equals(lon, ldata.get(0).getLon()));
         } catch (JsonSyntaxException e) {
             fail("Did not fit the gson schema");
-        }
-        
+        }  
     }
 
     /**
@@ -83,6 +79,7 @@ public class WeatherApiTest {
         String result = instance.getCurrentWeather(lat, lon);
         assertTrue(result.contains("London"));
         try {
+            Gson gson = new Gson();
            WeatherData wdata = gson.fromJson(result, WeatherData.class);
             assertTrue(!wdata.getWeather().isEmpty());
         } catch (JsonSyntaxException e) {
@@ -103,11 +100,50 @@ public class WeatherApiTest {
         assertTrue(result.contains("London"));
         
         try {
+            Gson gson = new Gson();
            ForecastData fdata = gson.fromJson(result, ForecastData.class);
             assertTrue(fdata.getList().size() == 5);
         } catch (JsonSyntaxException e) {
             fail("Did not fit the gson schema");
         }
     }
-    
+
+    /**
+     * Test of getAirQuality method, of class WeatherApi.
+     */
+    @Test
+    public void testGetAirQuality() {
+        System.out.println("getAirQuality");
+        double lat = 0.0;
+        double lon = 0.0;
+        WeatherApi instance = new WeatherApi();
+        String result = instance.getAirQuality(lat, lon);
+        try {
+            Gson gson = new Gson();
+            AirQualityData aqdata = gson.fromJson(result, AirQualityData.class);
+            Double aqi = aqdata.getList().get(0).getMain().getAqi();
+            assertTrue(aqi >= 1.0 && aqi <= 5.0);
+        } catch (JsonSyntaxException e) {
+            fail("Did not fit the gson schema");
+        }
+    }
+
+    /**
+     * Test of getHourlyForecast method, of class WeatherApi.
+     */
+    @Test
+    public void testGetHourlyForecast() {
+        System.out.println("getHourlyForecast");
+        double lat = 0.0;
+        double lon = 0.0;
+        WeatherApi instance = new WeatherApi();
+        String result = instance.getHourlyForecast(lat, lon);
+        try {
+            Gson gson = new Gson();
+            HourlyForecastData hfdata = gson.fromJson(result, HourlyForecastData.class);
+            assertTrue(hfdata.getList().size() == 24);
+        } catch (JsonSyntaxException e) {
+            fail("Did not fit the gson schema");
+        }
+    }
 }
