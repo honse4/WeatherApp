@@ -132,7 +132,7 @@ public class WeatherApp extends Application {
      * @param location
      * @return 
      */
-    public boolean searchResult(String location) {
+    public LocationData searchResult(String location) {
         try {
             LocationData ldata = locationSearch(location);
             WeatherData wdata = weatherSearch(ldata);
@@ -142,9 +142,9 @@ public class WeatherApp extends Application {
             // Maybe make some of the containers into attributes so you can change their content
             // from here.
             
-            return true;
+            return ldata;
         } catch (Exception e) {
-            return false;
+            return null;
         }
         
     }

@@ -50,12 +50,8 @@ public class SavedSearches extends ComboBox{
         }
         
         EventHandler<ActionEvent> event =
-                  new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e)
-            {
-                searchbar.setText(getValue() + "");
-            }
+                  (ActionEvent e) -> {
+                      searchbar.setText(getValue().toString());
         };
         
         setOnAction(event);
@@ -67,7 +63,9 @@ public class SavedSearches extends ComboBox{
     }
     
     void addLocationIntoHistory(LocationData loc){
-        this.preferences.addLocationIntoHistory(loc);
-        this.list.add(loc.getName());
+        if (!this.list.contains(loc.getName())) {
+            this.preferences.addLocationIntoHistory(loc);
+            this.list.add(loc.getName());
+        }
     }
 }
