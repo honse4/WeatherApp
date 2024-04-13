@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -59,6 +60,18 @@ public class GsonToClass {
                 ldata.getLon()), ForecastData.class);
         
         return fdata;
+    }
+    
+    /**
+     * api call to get air quality
+     * @param ldata LocationData which has latitude and longitude
+     * @return AirQualityData
+     */
+    public AirQualityData qualitySearch(LocationData ldata) {
+        AirQualityData aqdata = gson.fromJson(api.getAirQuality(ldata.getLat(),
+                ldata.getLon()), AirQualityData.class);
+        
+        return aqdata;
     }
     
     /**

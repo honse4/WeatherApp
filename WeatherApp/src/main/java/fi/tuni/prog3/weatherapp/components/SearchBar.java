@@ -236,4 +236,5 @@ public class SearchBar extends VBox {
         favourites.getChildren().removeIf(node -> node.getId().equals(data.getName()+data.getState()));
         preferences.getFavouriteLocations().remove(data);
     }
+
 }

@@ -29,6 +29,15 @@ public interface iAPI {
     public String getForecast(double lat, double lon);
     
     /**
+     * Returns air quality for given coordinates
+     * @param lat The latitude of the location
+     * @param lon The longitude of the location
+     * @return String
+     */
+    public String getAirQuality(double lat, double lon);
+    
+    /**
+>>>>>>> main
      * Returns hourly forecast for the given coordinates
      * @param lat The latitude of the location
      * @param lon The longitude of the location

@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.Favourite;
 import javafx.scene.control.TextField;
@@ -45,7 +46,7 @@ public class WeatherApp extends Application {
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
         
         Scene scene = new Scene(root, 500, 700);   
-        
+
         TextField searchBar = getSearchBar(stage, scene);
         HBox top = new HBox( new Favourite(), searchBar);
         top.setAlignment(Pos.TOP_RIGHT);
@@ -141,6 +142,8 @@ public class WeatherApp extends Application {
             WeatherData weatherData = dataGetter.weatherSearch(locationData);
             ForecastData forecastData = dataGetter.forecastSearch(locationData);
             HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
+
             
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
