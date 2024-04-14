@@ -165,7 +165,7 @@ public class WeatherApp extends Application {
             return true;
         } catch (Exception e) {
             return false;
-        }   
+        }
     }
     
     public LocationData getCurrentLocation() {
