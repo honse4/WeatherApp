@@ -31,7 +31,7 @@ public class SearchBar extends VBox {
     private final TextField searchbar;
     private final Label error;
     private final HBox loading;
-    private SavedSearches savedSearches;
+    private SearchHistory savedSearches;
     
     /**
      * Constructor for the search bar.
@@ -57,7 +57,7 @@ public class SearchBar extends VBox {
         error.setMinWidth(200);
         error.setStyle("-fx-text-fill: #ff0000;");
         
-        getChildren().addAll(getBackButton(), getVBox(),getFavourites(), getSavedSearches());
+        getChildren().addAll(getBackButton(), getVBox(),getFavourites(), getSearchHistory());
         setSpacing(50);
         
         setOnKeyPressed(e -> {
@@ -197,12 +197,12 @@ public class SearchBar extends VBox {
         return favourites;
     }
     
-    private VBox getSavedSearches() throws Exception {
+    private VBox getSearchHistory() throws Exception {
         WeatherJsonProcessor processor = new WeatherJsonProcessor();
         String filename = "preferencesTestIn.json";
         try {
             Preferences preferences = processor.readFromFile(filename);
-            savedSearches = new SavedSearches(stage, scene, main, searchbar,preferences);
+            savedSearches = new SearchHistory(stage, scene, main, searchbar,preferences);
             
             VBox favourites = new VBox(savedSearches);
             favourites.setAlignment(Pos.CENTER);

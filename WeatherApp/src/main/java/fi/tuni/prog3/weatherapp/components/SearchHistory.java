@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  *
  * @author Ville Kivioja
  */
-public class SavedSearches extends ComboBox{
+public class SearchHistory extends ComboBox{
     private final Stage stage;
     private final Scene scene;
     private final WeatherApp main;
@@ -25,7 +25,7 @@ public class SavedSearches extends ComboBox{
     private Preferences preferences;
     
     
-    public SavedSearches(Stage stage, Scene scene, WeatherApp main, TextField searchbar, Preferences preferences) {
+    public SearchHistory(Stage stage, Scene scene, WeatherApp main, TextField searchbar, Preferences preferences) {
         this.stage = stage;
         this.scene = scene;
         this.main = main;
@@ -33,12 +33,6 @@ public class SavedSearches extends ComboBox{
         this.searchbar = searchbar;
         
         list = getItems();
-        if (!preferences.getFavouriteLocations().isEmpty()) {
-            for (LocationData preference : preferences.getFavouriteLocations()) {
-                String locName = preference.getName();
-                list.add(locName);
-            }
-        } 
 
         if (!preferences.getLocationSearchHistory().isEmpty()) {
             for (LocationData preference : preferences.getLocationSearchHistory()) {
