@@ -81,8 +81,7 @@ public class WeatherJsonProcessorTest {
         instance.setPreferences(this.preferences);
         boolean expResult = true;
         boolean result = instance.writeToFile(fileName);
-        assertEquals(expResult, result);
-        
+        assertEquals(expResult, result); 
     }
 
     /**

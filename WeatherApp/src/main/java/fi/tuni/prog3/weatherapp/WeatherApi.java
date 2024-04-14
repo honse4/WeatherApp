@@ -13,9 +13,6 @@ import java.net.URL;
  */
 public class WeatherApi implements iAPI{
     private final static String API_ID = "2bcb8cfeeba3f4072f586ab0d2b40b2b";
-    private final static String URL_WEATHER = "https://api.openweathermap.org/data/2.5/weather?";
-    private final static String URL_GEO = "http://api.openweathermap.org/geo/1.0/direct?";
-    private final static String URL_FORECAST_DAILY = "http://api.openweathermap.org/data/2.5/forecast/daily?";
     
     public WeatherApi() {}
     
@@ -28,7 +25,7 @@ public class WeatherApi implements iAPI{
     public String lookUpLocation(String loc) {
         String parameters = String.format("q=%s&limit=1&appid=%s",loc, API_ID);
         try {
-            URL url = new URL(URL_GEO + parameters);
+            URL url = new URL("http://api.openweathermap.org/geo/1.0/direct?" + parameters);
             
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -58,7 +55,7 @@ public class WeatherApi implements iAPI{
     public String getCurrentWeather(double lat, double lon) {
        String parameters = String.format("lat=%f&lon=%f&appid=%s",lat,lon, API_ID);
         try {
-            URL url = new URL(URL_WEATHER + parameters);
+            URL url = new URL("https://api.openweathermap.org/data/2.5/weather?" + parameters);
             
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -89,7 +86,7 @@ public class WeatherApi implements iAPI{
     public String getForecast(double lat, double lon) {
         String parameters = String.format("lat=%f&lon=%f&cnt=5&appid=%s",lat,lon, API_ID);
         try {
-            URL url = new URL(URL_FORECAST_DAILY + parameters);
+            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?" + parameters);
             
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -107,7 +104,65 @@ public class WeatherApi implements iAPI{
             
         }
         return null;
-    
     }
     
+    /**
+     * Returns air quality for given coordinates
+     * @param lat The latitude of the location
+     * @param lon The longitude of the location
+     * @return String
+     */
+    @Override
+    public String getAirQuality(double lat, double lon) {
+        String parameters = String.format("lat=%f&lon=%f&appid=%s",lat,lon, API_ID);
+        try {
+            URL url = new URL("http://api.openweathermap.org/data/2.5/air_pollution?" + parameters);
+            
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                responseReader.lines().forEach(line -> content.append(line).append("\n"));
+            }
+
+            conn.disconnect();
+            return content.toString();
+        } catch (IOException e) {
+            
+        }
+        return null;
+    }
+    
+    /**
+     * Returns hourly forecast for the given coordinates
+     * @param lat The latitude of the location
+     * @param lon The longitude of the location
+     * @return String
+     */
+    @Override
+    public String getHourlyForecast(double lat, double lon) {
+        String parameters = String.format("lat=%f&lon=%f&appid=%s&cnt=24",lat,lon, API_ID);
+        try {
+            URL url = new URL("https://pro.openweathermap.org/data/2.5/forecast/hourly?" + parameters);
+            
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                responseReader.lines().forEach(line -> content.append(line).append("\n"));
+            }
+
+            conn.disconnect();
+            return content.toString();
+        } catch (IOException e) {
+            
+        }
+        return null;
+    }
 }

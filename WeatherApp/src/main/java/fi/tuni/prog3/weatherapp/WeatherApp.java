@@ -14,12 +14,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
+import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
-import java.lang.reflect.Type;
-import java.util.List;
 import javafx.scene.control.TextField;
 
 
@@ -27,13 +26,12 @@ import javafx.scene.control.TextField;
  * JavaFX Weather Application.
  */
 public class WeatherApp extends Application {
-    private WeatherApi api;
-    private Gson gson ;
+    private GsonToClass dataGetter;
 
     @Override
     public void start(Stage stage) throws Exception {
-        this.api = new WeatherApi();
-        this.gson = new Gson();
+        this.dataGetter = new GsonToClass();
+
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -134,54 +132,19 @@ public class WeatherApp extends Application {
      */
     public LocationData searchResult(String location) {
         try {
-            LocationData ldata = locationSearch(location);
-            WeatherData wdata = weatherSearch(ldata);
-            ForecastData fdata = forecastSearch(ldata);
+            LocationData locationData = dataGetter.locationSearch(location);
+            WeatherData weatherData = dataGetter.weatherSearch(locationData);
+            ForecastData forecastData = dataGetter.forecastSearch(locationData);
+            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
             // from here.
             
-            return ldata;
+            return locationData;
         } catch (Exception e) {
             return null;
         }
-        
-    }
-    
-    /**
-     * api call to get the latitude and longitude for a location
-     * @param location String which has the name of the location
-     * @return LocationData
-     */
-    private LocationData locationSearch(String location) {
-        Type listType = new TypeToken<List<LocationData>>(){}.getType();
-        List<LocationData> ldata = gson.fromJson(api.lookUpLocation(location), listType);
-       
-        return ldata.get(0);
-    }
-    
-    /**
-     * api call to get the current weather
-     * @param ldata LocationData which has the latitude and longitude
-     * @return WeatherData
-     */
-    private WeatherData weatherSearch(LocationData ldata) {
-        WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
-                ldata.getLon()), WeatherData.class);
-        
-        return wdata;
-    }
-    
-    /**
-     * api call to get the forecast
-     * @param ldata LocationData which has the latitude and longitude
-     * @return ForecastData
-     */
-    private ForecastData forecastSearch(LocationData ldata) {
-        ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
-                ldata.getLon()), ForecastData.class);
-        
-        return fdata;
     }
 }
