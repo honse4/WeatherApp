@@ -27,17 +27,6 @@ public class WeatherJsonProcessorTest {
     
     @BeforeAll
     public static void setUpClass() {
-        ArrayList<LocationData> locs = new ArrayList<>();
-        for (int i = 50; i < 61; ++i) {
-            LocationData loc = new LocationData();
-            loc.setLat(Double.valueOf(i));
-            loc.setLon(Double.valueOf(i));
-            locs.add(loc);
-        }
-        preferences = new Preferences();
-        preferences.setCurrentLocation(locs.get(0));
-        preferences.setLocationSearchHistory(locs);
-        preferences.setFavouriteLocations(locs);
 
     }
     
@@ -74,6 +63,18 @@ public class WeatherJsonProcessorTest {
      */
     @Test
     public void testWriteToFile() throws Exception {
+        ArrayList<LocationData> locs = new ArrayList<>();
+        for (int i = 50; i < 61; ++i) {
+            LocationData loc = new LocationData();
+            loc.setLat(Double.valueOf(i));
+            loc.setLon(Double.valueOf(i));
+            locs.add(loc);
+        }
+        preferences = new Preferences();
+        preferences.setCurrentLocation(locs.get(0));
+        preferences.setLocationSearchHistory(locs);
+        preferences.setFavouriteLocations(locs);
+        
         System.out.println("writeToFile");
         String fileName = "preferencesTestOut.json";
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
@@ -89,6 +90,18 @@ public class WeatherJsonProcessorTest {
      */
     @Test
     public void testGetPreferences() {
+        ArrayList<LocationData> locs = new ArrayList<>();
+        for (int i = 50; i < 61; ++i) {
+            LocationData loc = new LocationData();
+            loc.setLat(Double.valueOf(i));
+            loc.setLon(Double.valueOf(i));
+            locs.add(loc);
+        }
+        preferences = new Preferences();
+        preferences.setCurrentLocation(locs.get(0));
+        preferences.setLocationSearchHistory(locs);
+        preferences.setFavouriteLocations(locs);
+        
         System.out.println("getPreferences");
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
         instance.setPreferences(this.preferences);
