@@ -20,6 +20,7 @@ import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.Favourite;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.control.TextField;
 
 
@@ -27,11 +28,20 @@ import javafx.scene.control.TextField;
  * JavaFX Weather Application.
  */
 public class WeatherApp extends Application {
-    private GsonToClass dataGetter;
-
+    private final GsonToClass dataGetter;
+    private final Preferences preferences;
+    private LocationData currentLocation;
+    private SearchBar search;
+    private Favourite favourite;
+    
+    public WeatherApp() {
+        this.dataGetter = new GsonToClass();
+        this.preferences = new Preferences(); // will change
+    }
+    
     @Override
     public void start(Stage stage) {
-        this.dataGetter = new GsonToClass();
+        
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -48,7 +58,8 @@ public class WeatherApp extends Application {
         Scene scene = new Scene(root, 500, 700);   
 
         TextField searchBar = getSearchBar(stage, scene);
-        HBox top = new HBox( new Favourite(), searchBar);
+        favourite = new Favourite(preferences, this, search);
+        HBox top = new HBox( favourite, searchBar);
         top.setAlignment(Pos.TOP_RIGHT);
         top.setSpacing(5);
         
@@ -116,7 +127,7 @@ public class WeatherApp extends Application {
      * @return TextField
      */
     private TextField getSearchBar(Stage stage, Scene scene) {
-        SearchBar search = new SearchBar(stage, scene, this);
+        search = new SearchBar(stage, scene, this,preferences);
         Scene searchScene = new Scene(search, 500, 700);
         
         TextField searchBar = new TextField();
@@ -138,11 +149,13 @@ public class WeatherApp extends Application {
      */
     public boolean searchResult(String location) {
         try {
-            LocationData locationData = dataGetter.locationSearch(location);
-            WeatherData weatherData = dataGetter.weatherSearch(locationData);
-            ForecastData forecastData = dataGetter.forecastSearch(locationData);
-            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
-            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
+            currentLocation = dataGetter.locationSearch(location);
+            WeatherData weatherData = dataGetter.weatherSearch(currentLocation);
+            ForecastData forecastData = dataGetter.forecastSearch(currentLocation);
+            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(currentLocation);
+            AirQualityData airQualityData = dataGetter.qualitySearch(currentLocation);
+            changeStarColour();
+            
 
             
             // These objects should contain everything needed to display the information.
@@ -154,4 +167,13 @@ public class WeatherApp extends Application {
             return false;
         }   
     }
+    
+    public LocationData getCurrentLocation() {
+        return this.currentLocation;
+    }
+    
+    public void changeStarColour() {
+        favourite.checkFavourite();
+    }
+    
 }

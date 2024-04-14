@@ -50,6 +50,10 @@ public class Preferences {
         this.favouriteLocations.add(newFavourite);
     }
     
+    public void deleteFavouriteLocations(LocationData data){
+        this.favouriteLocations.remove(data);
+    }
+    
     @Override
     public String toString() {
         String currentLoc = this.currentLocation.toString();

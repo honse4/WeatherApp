@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -36,8 +37,9 @@ public class SearchBar extends VBox {
      * @param stage Stage used by javaFx
      * @param scene Main scene presented to user
      * @param main WeatherApp class used for a method call
+     * @param preferences
      */
-    public SearchBar(Stage stage, Scene scene, WeatherApp main) {
+    public SearchBar(Stage stage, Scene scene, WeatherApp main,Preferences preferences) {
         this.stage = stage;
         this.scene = scene;
         this.main = main;
@@ -45,9 +47,10 @@ public class SearchBar extends VBox {
         this.error = new Label("");
         this.loading = new HBox(new Label("Loading..."));
         this.favourites = new VBox();
-        this.preferences = new Preferences(); // Temporary fix
+        this.preferences = preferences; // Temporary fix
         
         favourites.setAlignment(Pos.CENTER);
+        favourites.setSpacing(2);
 
         loading.setAlignment(Pos.CENTER);
         
@@ -64,7 +67,8 @@ public class SearchBar extends VBox {
         
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                onClick();
+                String search = searchbar.getText();
+                onClick(search);
             }
         });
     }
@@ -114,7 +118,8 @@ public class SearchBar extends VBox {
         searchButton.setStyle("-fx-background-radius: 0 20 20 0;");
         
         searchButton.setOnAction(e -> {
-            onClick();
+            String search = searchbar.getText();
+            onClick(search);
         });
         
         VBox topRow = getTopRow(searchbar, searchButton, error);
@@ -153,8 +158,7 @@ public class SearchBar extends VBox {
      * Function called by the search button. Uses a task to create a separate thread
      * for the api call and the main thread continues the other code. 
      */
-    private void onClick() {
-        String search = searchbar.getText();
+    private void onClick(String search) {
         searchbar.setText("");
         error.setText("");
         
@@ -186,7 +190,7 @@ public class SearchBar extends VBox {
      * Uses the favorites stored in memory and displays them
      * @return ScrollPane
      */
-    private ScrollPane getFavourites() {
+    private VBox getFavourites() {
         
         if (preferences.getFavouriteLocations() != null) {
             for (LocationData data: preferences.getFavouriteLocations()) {
@@ -201,9 +205,17 @@ public class SearchBar extends VBox {
         favouritesContainer.setFitToHeight(true);
         favouritesContainer.setFitToWidth(true);
         favouritesContainer.setContent(favourites);
+        favouritesContainer.setStyle("-fx-focus-color: #a0a0a0;-fx-padding: 5 5 5 5; -fx-focus-width: 1px;");
         
-        VBox.setMargin(favouritesContainer, new Insets(0, 30,100,30));
-        return favouritesContainer;
+        Label title = new Label("Favourites");
+        title.setFont(new Font("Helvetica", 16));
+        
+        VBox holder = new VBox(title, favouritesContainer);
+        holder.setAlignment(Pos.CENTER);
+        holder.setSpacing(5);
+        
+        VBox.setMargin(holder, new Insets(0, 30,80,30));
+        return holder;
     }
     
     /**
@@ -212,20 +224,18 @@ public class SearchBar extends VBox {
      */
     public void addFavourite(LocationData data) {
         favourites.getChildren().removeIf(node -> node instanceof Label);
-        Label name = new Label(data.getName());
-        Label state = new Label(data.getState()); 
-            
-        HBox row = new HBox(name, state);
-        row.setSpacing(10);
-        row.setId(data.getName() + data.getState());
-            
+         
         Button delete = new Button("X");
         delete.setOnAction(e -> {
             deleteFavourite(data);
         });
+        
+        LocationRow row = new LocationRow(data.getName(), data.getState(), delete);
+        row.setOnMouseClicked(e -> {
+            onClick(data.getName());
+        });
             
-        row.getChildren().add(delete);
-        favourites.getChildren().add(row);
+        favourites.getChildren().add(0, row);
     }
     
     /**
@@ -233,8 +243,13 @@ public class SearchBar extends VBox {
      * @param data LocationData of the favorite
      */
     public void deleteFavourite(LocationData data) {
+        preferences.deleteFavouriteLocations(data);
         favourites.getChildren().removeIf(node -> node.getId().equals(data.getName()+data.getState()));
-        preferences.getFavouriteLocations().remove(data);
+        main.changeStarColour();
+        
+        if (favourites.getChildren().isEmpty()) {
+            favourites.getChildren().add(new Label("No favourites added yet"));
+        }
     }
 
 }
