@@ -4,6 +4,7 @@
  */
 package fi.tuni.prog3.weatherapp;
 
+import com.google.gson.Gson;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 
@@ -49,12 +50,13 @@ public class WeatherJsonProcessorTest {
         System.out.println("readFromFile");
         String fileName = "preferencesTestIn.json";
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
-        String expResult = 
-                "current location:(61.49802,23.760317);"
-                + "location history:[(60.1756,24.9342), (61.49802,23.760317)];"
-                + "favourite locations:[(65.0121,25.4651)]";
+        Gson gson = new Gson();
+        String expectedJson = "{currentLocation:{lat:61.498020,lon:23.760317},locationSearchHistory:[{lat:60.1756,lon:24.9342},{lat:61.498020,lon:23.760317}],favouriteLocations:[{lat:65.0121,lon:25.4651}]}";
+        Preferences pref1 = gson.fromJson(expectedJson, Preferences.class);
+        
         String result = instance.readFromFile(fileName);
-        assertEquals(expResult, result);
+        Preferences pref2 = gson.fromJson(result, Preferences.class);
+        assertEquals(pref1.toString(), pref2.toString());
     }
 
     /**
@@ -74,6 +76,11 @@ public class WeatherJsonProcessorTest {
         preferences.setLocationSearchHistory(locs);
         preferences.setFavouriteLocations(locs);
         
+        Gson gson = new Gson();
+        WeatherJsonProcessor process = new WeatherJsonProcessor();
+        String json = process.readFromFile("preferencesTestIn.json");
+        preferences = gson.fromJson(json, Preferences.class);
+        
         System.out.println("writeToFile");
         String fileName = "preferencesTestOut.json";
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
@@ -87,7 +94,7 @@ public class WeatherJsonProcessorTest {
      * Test of getPreferences method, of class WeatherJsonProcessor.
      */
     @Test
-    public void testGetPreferences() {
+    public void testGetPreferences() throws Exception {
         ArrayList<LocationData> locs = new ArrayList<>();
         for (int i = 50; i < 61; ++i) {
             LocationData loc = new LocationData();
@@ -95,11 +102,12 @@ public class WeatherJsonProcessorTest {
             loc.setLon(Double.valueOf(i));
             locs.add(loc);
         }
+        
         preferences = new Preferences();
         preferences.setCurrentLocation(locs.get(0));
         preferences.setLocationSearchHistory(locs);
         preferences.setFavouriteLocations(locs);
-        
+
         System.out.println("getPreferences");
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
         instance.setPreferences(this.preferences);
