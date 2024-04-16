@@ -51,7 +51,11 @@ public class WeatherJsonProcessorTest {
         String fileName = "preferencesTestIn.json";
         WeatherJsonProcessor instance = new WeatherJsonProcessor();
         Gson gson = new Gson();
-        String expectedJson = "{currentLocation:{lat:61.498020,lon:23.760317},locationSearchHistory:[{lat:60.1756,lon:24.9342},{lat:61.498020,lon:23.760317}],favouriteLocations:[{lat:65.0121,lon:25.4651}]}";
+        String expectedJson = 
+                "{currentLocation:{lat:61.498020,lon:23.760317},"
+                + "locationSearchHistory:[{lat:60.1756,lon:24.9342},"
+                + "{lat:61.498020,lon:23.760317}],"
+                + "favouriteLocations:[{lat:65.0121,lon:25.4651}]}";
         Preferences pref1 = gson.fromJson(expectedJson, Preferences.class);
         
         String result = instance.readFromFile(fileName);
