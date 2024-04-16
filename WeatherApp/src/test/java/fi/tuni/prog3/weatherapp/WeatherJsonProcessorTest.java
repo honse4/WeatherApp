@@ -53,8 +53,7 @@ public class WeatherJsonProcessorTest {
         Gson gson = new Gson();
         String expectedJson = 
                 "{currentLocation:{lat:61.498020,lon:23.760317},"
-                + "locationSearchHistory:[{lat:60.1756,lon:24.9342},"
-                + "{lat:61.498020,lon:23.760317}],"
+                + "locationSearchHistory:[{lat:60.1756,lon:24.9342},{lat:61.498020,lon:23.760317}],"
                 + "favouriteLocations:[{lat:65.0121,lon:25.4651}]}";
         Preferences pref1 = gson.fromJson(expectedJson, Preferences.class);
         
@@ -73,6 +72,7 @@ public class WeatherJsonProcessorTest {
             LocationData loc = new LocationData();
             loc.setLat(Double.valueOf(i));
             loc.setLon(Double.valueOf(i));
+            loc.setName(String.valueOf(i));
             locs.add(loc);
         }
         preferences = new Preferences();
@@ -81,9 +81,6 @@ public class WeatherJsonProcessorTest {
         preferences.setFavouriteLocations(locs);
         
         Gson gson = new Gson();
-        WeatherJsonProcessor process = new WeatherJsonProcessor();
-        String json = process.readFromFile("preferencesTestIn.json");
-        preferences = gson.fromJson(json, Preferences.class);
         
         System.out.println("writeToFile");
         String fileName = "preferencesTestOut.json";
@@ -104,6 +101,7 @@ public class WeatherJsonProcessorTest {
             LocationData loc = new LocationData();
             loc.setLat(Double.valueOf(i));
             loc.setLon(Double.valueOf(i));
+            loc.setName(String.valueOf(i));
             locs.add(loc);
         }
         
