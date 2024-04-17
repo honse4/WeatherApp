@@ -1,10 +1,8 @@
 package fi.tuni.prog3.weatherapp.components;
 
-import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
-import java.util.List;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
@@ -14,12 +12,10 @@ import javafx.scene.shape.Polygon;
  */
 public class Favourite extends Polygon {
     private final Preferences preferences;
-    private final WeatherApp main;
     private final SearchBar search;
     
-    public Favourite(Preferences preferences, WeatherApp main, SearchBar search) {
+    public Favourite(Preferences preferences, SearchBar search) {
         this. preferences = preferences;
-        this.main = main;
         this.search = search;
         
         double angle = Math.PI / 5;
@@ -46,13 +42,10 @@ public class Favourite extends Polygon {
             setScaleZ(1);
         });
         
-        setOnMousePressed(e ->{
-            pressStar();
-        });
+        
     } 
         
-    public void pressStar() {
-        LocationData data = main.getCurrentLocation();
+    public void pressStar(LocationData data) {
         if (preferences.getFavouriteLocations() != null) {
             if (preferences.getFavouriteLocations().contains(data)) {
                 search.deleteFavourite(data);
@@ -72,10 +65,10 @@ public class Favourite extends Polygon {
             
     }
     
-    public void checkFavourite() {
+    public void checkFavourite(LocationData data) {
         
         if (preferences.getFavouriteLocations() != null) {
-            if(preferences.getFavouriteLocations().contains(main.getCurrentLocation())) {
+            if(preferences.getFavouriteLocations().contains(data)) {
                  setFill(Color.YELLOW);
             } else {
                 setFill(Color.TRANSPARENT);

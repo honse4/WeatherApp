@@ -15,6 +15,7 @@ import javafx.scene.text.Font;
 public class LocationRow extends HBox {
     
     public LocationRow(String name, String state, Button delete) {
+        
         Label placeName = new Label(name);
         placeName.setFont(new Font("Helvetica", 14));
         
@@ -26,6 +27,7 @@ public class LocationRow extends HBox {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         delete.setMaxHeight(15);
+        delete.setFocusTraversable(false);
         getChildren().addAll(spacer,delete);
         
         
@@ -46,7 +48,7 @@ public class LocationRow extends HBox {
     }
     
     private void setColourHover(String colour){
-        setStyle("-fx-border-color:black; -fx-padding: 0 30 0 5;"
+        setStyle("-fx-border-color:black; -fx-padding: 0 25 0 20;"
                 + " -fx-border-width: 1;" + colour);
     }
 }

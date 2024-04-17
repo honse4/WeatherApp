@@ -20,8 +20,10 @@ import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.Favourite;
+import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Font;
 
 
 /**
@@ -33,6 +35,8 @@ public class WeatherApp extends Application {
     private LocationData currentLocation;
     private SearchBar search;
     private Favourite favourite;
+    private SearchHistory history;
+    private Label locationName;
     
     public WeatherApp() {
         this.dataGetter = new GsonToClass();
@@ -56,15 +60,9 @@ public class WeatherApp extends Application {
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
         
         Scene scene = new Scene(root, 500, 700);   
-
-        TextField searchBar = getSearchBar(stage, scene);
-        favourite = new Favourite(preferences, this, search);
-        HBox top = new HBox( favourite, searchBar);
-        top.setAlignment(Pos.TOP_RIGHT);
-        top.setSpacing(5);
         
-        root.setTop(top);
-        BorderPane.setAlignment(top, Pos.TOP_RIGHT);
+        root.setTop(getHeader(stage, scene));
+        //BorderPane.setAlignment(top, Pos.TOP_RIGHT);
 
         
         stage.setScene(scene);
@@ -74,6 +72,33 @@ public class WeatherApp extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+    
+    private BorderPane getHeader(Stage stage, Scene scene) {
+        
+        Button searchHistoryButton = getSearchHistory(stage, scene);
+        searchHistoryButton.setAlignment(Pos.TOP_LEFT);
+        
+        locationName = new Label("Tampere");
+        locationName.setFont(new Font("Helvetica", 18));
+        locationName.setAlignment(Pos.CENTER);
+        
+        TextField searchBar = getSearchBar(stage, scene);
+        
+        favourite = new Favourite(preferences, search);
+        favourite.setOnMousePressed(e ->{
+            favourite.pressStar(currentLocation);
+        });
+        
+        HBox topRight = new HBox(favourite, searchBar);
+        topRight.setAlignment(Pos.TOP_RIGHT);
+        topRight.setSpacing(10);
+        
+        BorderPane header = new BorderPane();
+        header.setLeft(searchHistoryButton);
+        header.setCenter(locationName);
+        header.setRight(topRight);
+        return header;
     }
 
     private VBox getCenterVBox() {
@@ -120,6 +145,19 @@ public class WeatherApp extends Application {
         return button;
     }
     
+    private Button getSearchHistory(Stage stage, Scene scene) {
+        history = new SearchHistory(preferences, stage, scene, this);
+        Scene historyScene = new Scene(history, 500, 700);
+        
+        Button historySwitch = new Button("Search History");
+        historySwitch.setFocusTraversable(false);
+        historySwitch.setOnAction(e -> {
+            stage.setScene(historyScene);
+        });
+        
+        return historySwitch;
+    }
+    
     /**
      * Gets placeholder search bar which redirects to search page
      * @param stage Primary stage 
@@ -149,12 +187,17 @@ public class WeatherApp extends Application {
      */
     public boolean searchResult(String location) {
         try {
-            currentLocation = dataGetter.locationSearch(location);
-            WeatherData weatherData = dataGetter.weatherSearch(currentLocation);
-            ForecastData forecastData = dataGetter.forecastSearch(currentLocation);
-            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(currentLocation);
-            AirQualityData airQualityData = dataGetter.qualitySearch(currentLocation);
+            LocationData locationData = dataGetter.locationSearch(location);
+            WeatherData weatherData = dataGetter.weatherSearch(locationData);
+            ForecastData forecastData = dataGetter.forecastSearch(locationData);
+            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
+            
+            
+            currentLocation = locationData;
             changeStarColour();
+            history.addLocation(currentLocation);
+            locationName.setText(currentLocation.getName());
             
 
             
@@ -173,7 +216,7 @@ public class WeatherApp extends Application {
     }
     
     public void changeStarColour() {
-        favourite.checkFavourite();
+        favourite.checkFavourite(currentLocation);
     }
     
 }

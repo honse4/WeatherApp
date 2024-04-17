@@ -47,7 +47,7 @@ public class SearchBar extends VBox {
         this.error = new Label("");
         this.loading = new HBox(new Label("Loading..."));
         this.favourites = new VBox();
-        this.preferences = preferences; // Temporary fix
+        this.preferences = preferences; 
         
         favourites.setAlignment(Pos.CENTER);
         favourites.setSpacing(2);
@@ -79,9 +79,9 @@ public class SearchBar extends VBox {
      */
     private Button getBackButton() {
         SVGPath leftArrow = new SVGPath();
-        leftArrow.setContent("M 20,0 L 8,12 L 20,24 L 20,16 L 32,16 L 32,8 L 20,8 L 20,0 Z");
-        leftArrow.setScaleX(0.75);  
-        leftArrow.setScaleY(0.75);
+        leftArrow.setContent("M 6 0 L 0 3 L 6 6 L 4.5 3 Z");
+        leftArrow.setScaleX(1.75);  
+        leftArrow.setScaleY(1.75);
         
         Button back = new Button();
         back.setAlignment(Pos.CENTER);
@@ -205,7 +205,9 @@ public class SearchBar extends VBox {
         favouritesContainer.setFitToHeight(true);
         favouritesContainer.setFitToWidth(true);
         favouritesContainer.setContent(favourites);
-        favouritesContainer.setStyle("-fx-focus-color: #a0a0a0;-fx-padding: 5 5 5 5; -fx-focus-width: 1px;");
+        favouritesContainer.setStyle("-fx-background-color: transparent; "
+        + "-fx-border-color: transparent; -fx-padding: 10 7 10 7; "
+        + "-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         
         Label title = new Label("Favourites");
         title.setFont(new Font("Helvetica", 16));
