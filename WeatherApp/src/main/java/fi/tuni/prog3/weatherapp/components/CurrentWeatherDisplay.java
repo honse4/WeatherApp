@@ -128,7 +128,7 @@ public class CurrentWeatherDisplay extends VBox {
         currentTemperatureLabel.setText(String.format("%.1f", temperature));
         Double feelsLikeTemperature = wdata.getMain().getFeels_like() - 273.15;
         feelsLikeContentLabel.setText(String.format("%.1f", feelsLikeTemperature));
-        currentLocationLabel.setText(wdata.getWeather().get(0).getDescription());
+        currentLocationLabel.setText(ldata.getName());
     }
     
 }

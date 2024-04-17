@@ -140,7 +140,7 @@ public class WeatherApp extends Application {
             WeatherData weatherData = dataGetter.weatherSearch(locationData);
             ForecastData forecastData = dataGetter.forecastSearch(locationData);
             HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
-            
+
             currentWeatherBox.updateValues(locationData, weatherData);
             
             // These objects should contain everything needed to display the information.
