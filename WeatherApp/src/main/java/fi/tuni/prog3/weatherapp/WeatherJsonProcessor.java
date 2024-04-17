@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,8 +18,13 @@ import java.io.InputStreamReader;
 
 public class WeatherJsonProcessor implements iReadAndWriteToFile {
     private Preferences preferences;
-    String result;
 
+    
+     /**
+     * Reads and returns the contents of read Json-file as String
+     * @param fileName the file which is to be read
+     * @return String.
+     */
     @Override
     public String readFromFile(String fileName) throws Exception {
         FileInputStream file = new FileInputStream(fileName);
@@ -28,13 +32,18 @@ public class WeatherJsonProcessor implements iReadAndWriteToFile {
         try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(file))) {
             responseReader.lines().forEach(line -> content.append(line).append("\n"));
             file.close();
-            result = content.toString();
             return content.toString();
         } catch (FileNotFoundException e) {
             return null;
         }
     }
 
+    /**
+     * Writes the contents of the preferences into the Json-file of the
+     * given name
+     * @param fileName the file into which the contents are written
+     * @return boolean-value based on whether the writing was succesful or not
+     */
     @Override
     public boolean writeToFile(String fileName) throws Exception {
         try {
