@@ -16,17 +16,19 @@ public interface iAPI {
      * Returns the current weather for the given coordinates.
      * @param lat The latitude of the location.
      * @param lon The longitude of the location.
+     * @param unit Unit of measurement
      * @return String.
      */
-    public String getCurrentWeather(double lat, double lon);
+    public String getCurrentWeather(double lat, double lon, String unit);
 
     /**
      * Returns a forecast for the given coordinates.
      * @param lat The latitude of the location.
      * @param lon The longitude of the location.
+     * @param unit Unit of measurement
      * @return String.
      */
-    public String getForecast(double lat, double lon);
+    public String getForecast(double lat, double lon, String unit);
     
     /**
      * Returns air quality for given coordinates
@@ -40,7 +42,8 @@ public interface iAPI {
      * Returns hourly forecast for the given coordinates
      * @param lat The latitude of the location
      * @param lon The longitude of the location
+     * @param unit Unit of measurement
      * @return String
      */
-    public String getHourlyForecast(double lat, double lon);
+    public String getHourlyForecast(double lat, double lon, String unit);
 }

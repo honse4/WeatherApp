@@ -41,11 +41,12 @@ public class GsonToClass {
     /**
      * api call to get the current weather
      * @param ldata LocationData which has the latitude and longitude
+     * @param unit Unit of measurement
      * @return WeatherData
      */
-    public WeatherData weatherSearch(LocationData ldata) {
+    public WeatherData weatherSearch(LocationData ldata, String unit) {
         WeatherData wdata = gson.fromJson(api.getCurrentWeather(ldata.getLat(),
-                ldata.getLon()), WeatherData.class);
+                ldata.getLon(), unit), WeatherData.class);
         
         return wdata;
     }
@@ -53,11 +54,12 @@ public class GsonToClass {
     /**
      * api call to get the forecast
      * @param ldata LocationData which has the latitude and longitude
+     * @param unit Unit of measurement
      * @return ForecastData
      */
-    public ForecastData forecastSearch(LocationData ldata) {
+    public ForecastData forecastSearch(LocationData ldata, String unit) {
         ForecastData fdata = gson.fromJson(api.getForecast(ldata.getLat(),
-                ldata.getLon()), ForecastData.class);
+                ldata.getLon(), unit), ForecastData.class);
         
         return fdata;
     }
@@ -77,11 +79,12 @@ public class GsonToClass {
     /**
      * api call to get daily forecast
      * @param ldata LocationData which has the latitude and longitude
+     * @param unit Unit of measurement
      * @return HourlyForecastData
      */
-    public HourlyForecastData hourlyForecastSearch(LocationData ldata) {
+    public HourlyForecastData hourlyForecastSearch(LocationData ldata, String unit) {
         HourlyForecastData hfdata = gson.fromJson(api.getHourlyForecast(ldata.getLat(),
-                ldata.getLon()), HourlyForecastData.class);
+                ldata.getLon(), unit), HourlyForecastData.class);
         
         return hfdata;
     }
