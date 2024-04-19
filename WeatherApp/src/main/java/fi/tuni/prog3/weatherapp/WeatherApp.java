@@ -20,6 +20,7 @@ import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.Favourite;
+import fi.tuni.prog3.weatherapp.components.ForecastChart;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.control.TextField;
@@ -38,6 +39,11 @@ public class WeatherApp extends Application {
     private SearchHistory history;
     private Label locationName;
     
+    //remove after test
+    HourlyForecastData hourlyForecastData;
+    
+    private ForecastChart chart;
+    
     public WeatherApp() {
         this.dataGetter = new GsonToClass();
         this.preferences = new Preferences(); // will change
@@ -45,6 +51,7 @@ public class WeatherApp extends Application {
     
     @Override
     public void start(Stage stage) {
+        
         
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
@@ -59,7 +66,7 @@ public class WeatherApp extends Application {
         root.setBottom(quitButton);
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
         
-        Scene scene = new Scene(root, 500, 700);   
+        Scene scene = new Scene(root, 500, 700);
         
         root.setTop(getHeader(stage, scene));
         //BorderPane.setAlignment(top, Pos.TOP_RIGHT);
@@ -67,6 +74,11 @@ public class WeatherApp extends Application {
         
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
+        
+        // test, remove after
+        searchResult("Turku");
+        getForecastChart(hourlyForecastData, stage, this);
+        
         stage.show();
     }
 
@@ -199,7 +211,8 @@ public class WeatherApp extends Application {
             history.addLocation(currentLocation);
             locationName.setText(currentLocation.getName());
             
-
+            //remove after tests
+            this.hourlyForecastData = hourlyForecastData;
             
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
@@ -217,6 +230,10 @@ public class WeatherApp extends Application {
     
     public void changeStarColour() {
         favourite.checkFavourite(currentLocation);
+    }
+    
+    public void getForecastChart(HourlyForecastData data, Stage stage, WeatherApp main) {
+        chart = new ForecastChart(data, stage, main);
     }
     
 }
