@@ -21,6 +21,7 @@ import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
+import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
@@ -37,9 +38,11 @@ public class WeatherApp extends Application {
     private Favourite favourite;
     private SearchHistory history;
     private Label locationName;
+    private String unit;
     
     public WeatherApp() {
         this.dataGetter = new GsonToClass();
+        this.unit = "metric";
         this.preferences = new Preferences(); // will change
     }
     
@@ -76,8 +79,11 @@ public class WeatherApp extends Application {
     
     private BorderPane getHeader(Stage stage, Scene scene) {
         
+        Units switchUnit = new Units(this);
         Button searchHistoryButton = getSearchHistory(stage, scene);
         searchHistoryButton.setAlignment(Pos.TOP_LEFT);
+        HBox topLeft = new HBox(searchHistoryButton, switchUnit);
+        topLeft.setSpacing(5);
         
         locationName = new Label("Tampere");
         locationName.setFont(new Font("Helvetica", 18));
@@ -95,7 +101,7 @@ public class WeatherApp extends Application {
         topRight.setSpacing(10);
         
         BorderPane header = new BorderPane();
-        header.setLeft(searchHistoryButton);
+        header.setLeft(topLeft);
         header.setCenter(locationName);
         header.setRight(topRight);
         return header;
@@ -188,9 +194,9 @@ public class WeatherApp extends Application {
     public boolean searchResult(String location) {
         try {
             LocationData locationData = dataGetter.locationSearch(location);
-            WeatherData weatherData = dataGetter.weatherSearch(locationData);
-            ForecastData forecastData = dataGetter.forecastSearch(locationData);
-            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            WeatherData weatherData = dataGetter.weatherSearch(locationData, unit);
+            ForecastData forecastData = dataGetter.forecastSearch(locationData, unit);
+            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData, unit);
             AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
             
@@ -199,7 +205,6 @@ public class WeatherApp extends Application {
             history.addLocation(currentLocation);
             locationName.setText(currentLocation.getName());
             
-
             
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
@@ -217,6 +222,10 @@ public class WeatherApp extends Application {
     
     public void changeStarColour() {
         favourite.checkFavourite(currentLocation);
+    }
+    
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
     
 }

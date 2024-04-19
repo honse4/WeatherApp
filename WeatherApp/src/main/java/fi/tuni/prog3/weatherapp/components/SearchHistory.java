@@ -4,6 +4,9 @@ import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -14,9 +17,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -29,7 +35,8 @@ public class SearchHistory extends VBox {
     private final Scene scene;
     private final WeatherApp main;
     private final HBox message;
-    private final Label loading;
+    private final Arc arc;
+    private final RotateTransition animation;
     
     public SearchHistory(Preferences preferences, Stage stage, Scene scene, WeatherApp main) {
         this.preferences = preferences;
@@ -38,10 +45,15 @@ public class SearchHistory extends VBox {
         this.stage = stage;
         this.main = main;
         this.message = new HBox();
-        this.loading = new Label();
+        
+        arc = new Arc(20, 20, 8, 8, 0, 270);
+        arc.setFill(Color.TRANSPARENT);
+        arc.setStroke(Color.BLACK);
+        arc.setStrokeWidth(2);
+        
+        animation = animation(arc);
         
         message.setAlignment(Pos.CENTER);
-        message.getChildren().add(loading);
         
         list.setAlignment(Pos.CENTER);
         list.setSpacing(4);
@@ -124,7 +136,9 @@ public class SearchHistory extends VBox {
     
     private void onClick(String search) {
         getChildren().removeIf(node -> node == message);
-        loading.setText("Loading...");
+        message.getChildren().removeIf(node -> node instanceof Label);
+        message.getChildren().add(arc);
+        animation.play();
         getChildren().add(2, message);
         
         //
@@ -142,8 +156,10 @@ public class SearchHistory extends VBox {
                     scene.getRoot().requestFocus();
                     getChildren().remove(message);
                 } else {
-                    loading.setText("Error processing your request");
+                    message.getChildren().add(new Label("Error processing your request"));
                 }
+                animation.pause();
+                message.getChildren().removeIf(node -> node instanceof Arc);
             }
         };
         new Thread(task).start();   
@@ -171,5 +187,14 @@ public class SearchHistory extends VBox {
         HBox alignment = new HBox(back);
         alignment.setAlignment(Pos.TOP_RIGHT);
         return alignment;
+    }
+    
+    private RotateTransition animation(Arc arc) {   
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(1), arc);
+        rotateTransition.setByAngle(360); 
+        rotateTransition.setCycleCount(Animation.INDEFINITE); 
+        rotateTransition.setInterpolator(Interpolator.LINEAR); 
+
+        return rotateTransition;
     }
 }

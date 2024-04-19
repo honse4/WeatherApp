@@ -75,8 +75,9 @@ public class WeatherApiTest {
         System.out.println("getCurrentWeather");
         double lat = 51.5073219;
         double lon = -0.1276474;
+        String unit = "metric";
         WeatherApi instance = new WeatherApi();
-        String result = instance.getCurrentWeather(lat, lon);
+        String result = instance.getCurrentWeather(lat, lon, unit);
         assertTrue(result.contains("London"));
         try {
             Gson gson = new Gson();
@@ -95,8 +96,9 @@ public class WeatherApiTest {
         System.out.println("getForecast");
         double lat = 51.5073219;
         double lon = -0.1276474;
+        String unit = "metric";
         WeatherApi instance = new WeatherApi();
-        String result = instance.getForecast(lat, lon);
+        String result = instance.getForecast(lat, lon, unit);
         assertTrue(result.contains("London"));
         
         try {
@@ -136,8 +138,9 @@ public class WeatherApiTest {
         System.out.println("getHourlyForecast");
         double lat = 0.0;
         double lon = 0.0;
+        String unit = "metric";
         WeatherApi instance = new WeatherApi();
-        String result = instance.getHourlyForecast(lat, lon);
+        String result = instance.getHourlyForecast(lat, lon, unit);
         try {
             Gson gson = new Gson();
             HourlyForecastData hfdata = gson.fromJson(result, HourlyForecastData.class);
