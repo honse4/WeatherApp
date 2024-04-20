@@ -23,6 +23,7 @@ import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import javafx.scene.Cursor;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -177,6 +178,7 @@ public class WeatherApp extends Application {
         searchBar.setPromptText("Search a location");
         
         searchBar.setOnMouseClicked(e -> {   
+            searchBar.setCursor(Cursor.DEFAULT);
             stage.setScene(searchScene);
         });
         
