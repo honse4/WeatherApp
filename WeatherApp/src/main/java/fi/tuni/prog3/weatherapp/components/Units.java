@@ -1,6 +1,7 @@
 package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
@@ -23,10 +24,12 @@ public class Units extends HBox{
     private final Button changeMetric;
     private final Label message;
     private final RotateTransition animation;
+    private final Preferences preferences;
     
-    public Units(WeatherApp main) {
+    public Units(WeatherApp main, Preferences preferences) {
         this.main = main;
         this.isMetric = true;
+        this.preferences = preferences;
         
         Arc arc = new Arc(20, 20, 8, 8, 0, 270);
         arc.setFill(Color.TRANSPARENT);
@@ -36,7 +39,7 @@ public class Units extends HBox{
         this.changeMetric = new Button("Imperial");
         changeMetric.setOnAction(e -> {
             main.setUnit(isMetric ? "imperial" : "metric");
-            onClick(main.getCurrentLocation().getName(), arc);
+            onClick(preferences.getCurrentLocation().getName(), arc);
         });
         changeMetric.setFocusTraversable(false);
         

@@ -33,7 +33,6 @@ import javafx.scene.text.Font;
 public class WeatherApp extends Application {
     private final GsonToClass dataGetter;
     private final Preferences preferences;
-    private LocationData currentLocation;
     private SearchBar search;
     private Favourite favourite;
     private SearchHistory history;
@@ -65,9 +64,7 @@ public class WeatherApp extends Application {
         Scene scene = new Scene(root, 500, 700);   
         
         root.setTop(getHeader(stage, scene));
-        //BorderPane.setAlignment(top, Pos.TOP_RIGHT);
-
-        
+      
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
         stage.show();
@@ -79,7 +76,7 @@ public class WeatherApp extends Application {
     
     private BorderPane getHeader(Stage stage, Scene scene) {
         
-        Units switchUnit = new Units(this);
+        Units switchUnit = new Units(this, preferences);
         Button searchHistoryButton = getSearchHistory(stage, scene);
         searchHistoryButton.setAlignment(Pos.TOP_LEFT);
         HBox topLeft = new HBox(searchHistoryButton, switchUnit);
@@ -93,7 +90,7 @@ public class WeatherApp extends Application {
         
         favourite = new Favourite(preferences, search);
         favourite.setOnMousePressed(e ->{
-            favourite.pressStar(currentLocation);
+            favourite.pressStar(preferences.getCurrentLocation());
         });
         
         HBox topRight = new HBox(favourite, searchBar);
@@ -200,10 +197,10 @@ public class WeatherApp extends Application {
             AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
             
-            currentLocation = locationData;
+            preferences.setCurrentLocation(locationData);
             changeStarColour();
-            history.addLocation(currentLocation);
-            locationName.setText(currentLocation.getName());
+            history.addLocation(locationData);
+            locationName.setText(locationData.getName());
             
             
             // These objects should contain everything needed to display the information.
@@ -216,12 +213,8 @@ public class WeatherApp extends Application {
         }
     }
     
-    public LocationData getCurrentLocation() {
-        return this.currentLocation;
-    }
-    
     public void changeStarColour() {
-        favourite.checkFavourite(currentLocation);
+        favourite.checkFavourite(preferences.getCurrentLocation());
     }
     
     public void setUnit(String unit) {
