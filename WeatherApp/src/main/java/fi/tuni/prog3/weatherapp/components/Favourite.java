@@ -46,7 +46,7 @@ public class Favourite extends Polygon {
     } 
         
     public void pressStar(LocationData data) {
-        if (preferences.getFavouriteLocations() != null) {
+        if (!preferences.getFavouriteLocations().isEmpty()) {
             if (preferences.getFavouriteLocations().contains(data)) {
                 search.deleteFavourite(data);
                 setFill(Color.TRANSPARENT);
