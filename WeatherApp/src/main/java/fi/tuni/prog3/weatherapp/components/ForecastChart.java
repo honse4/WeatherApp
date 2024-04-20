@@ -29,8 +29,6 @@ public class ForecastChart {
         this.stage = stage;
         this.main = main;
         
-        
-        
         xAxis = new CategoryAxis();
         xAxis.setLabel("Time");
         yAxis = new NumberAxis();
@@ -43,7 +41,7 @@ public class ForecastChart {
         
         for (var forecastdata : data.getList()) {
             series.getData().add(new XYChart.Data(forecastdata.getDt_txt(), 
-                                                  forecastdata.getMain().getTemp()));
+                                                  forecastdata.getMain().getTemp() - 273.15));
         }
         
         lineChart.getData().add(series);

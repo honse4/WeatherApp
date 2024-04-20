@@ -76,7 +76,7 @@ public class WeatherApp extends Application {
         stage.setTitle("WeatherApp");
         
         // test, remove after
-        searchResult("Turku");
+        searchResult("Tampere");
         getForecastChart(hourlyForecastData, stage, this);
         
         stage.show();
