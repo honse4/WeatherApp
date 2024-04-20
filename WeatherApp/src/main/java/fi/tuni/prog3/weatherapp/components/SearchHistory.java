@@ -4,6 +4,7 @@ import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
@@ -71,8 +72,10 @@ public class SearchHistory extends VBox {
     }
     
     private ScrollPane getScrollPane(){
-        if (preferences.getLocationSearchHistory() != null) {
-            for (LocationData data: preferences.getLocationSearchHistory()) {
+        ArrayList<LocationData> locations = new ArrayList<>(preferences.getLocationSearchHistory());
+        
+        if (!locations.isEmpty()) {
+            for (LocationData data: locations) {
                  addLocation(data);
             }
         }
@@ -95,7 +98,7 @@ public class SearchHistory extends VBox {
     }
     
     public void addLocation(LocationData data) { 
-        if (preferences.getLocationSearchHistory() != null ) {
+        if (!preferences.getLocationSearchHistory().isEmpty() ) {
             deleteLocation(data);
             preferences.addLocationIntoHistory(data);
         } else {

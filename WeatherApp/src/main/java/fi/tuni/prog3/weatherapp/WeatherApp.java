@@ -23,6 +23,7 @@ import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import java.io.FileReader;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -33,16 +34,21 @@ import javafx.scene.text.Font;
 public class WeatherApp extends Application {
     private final GsonToClass dataGetter;
     private final Preferences preferences;
+
+    private final WeatherJsonProcessor jsonProcessor;
+    private final String PREFERENCES_FILE = "savedPreferences.json";
     private SearchBar search;
     private Favourite favourite;
     private SearchHistory history;
     private Label locationName;
     private String unit;
     
-    public WeatherApp() {
+    public WeatherApp() throws Exception {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
-        this.preferences = new Preferences(); // will change
+        this.jsonProcessor = new WeatherJsonProcessor();
+        String jsonData = jsonProcessor.readFromFile(PREFERENCES_FILE);
+        this.preferences = dataGetter.makePreferencesObject(jsonData);
     }
     
     @Override
@@ -64,7 +70,10 @@ public class WeatherApp extends Application {
         Scene scene = new Scene(root, 500, 700);   
         
         root.setTop(getHeader(stage, scene));
-      
+        
+        // Get the weather for CurrentLocation as the default
+        searchResult(this.preferences.getCurrentLocation().getName());
+        
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
         stage.show();
@@ -82,7 +91,7 @@ public class WeatherApp extends Application {
         HBox topLeft = new HBox(searchHistoryButton, switchUnit);
         topLeft.setSpacing(5);
         
-        locationName = new Label("Tampere");
+        locationName = new Label("");
         locationName.setFont(new Font("Helvetica", 18));
         locationName.setAlignment(Pos.CENTER);
         
@@ -198,6 +207,7 @@ public class WeatherApp extends Application {
             
             
             preferences.setCurrentLocation(locationData);
+
             changeStarColour();
             history.addLocation(locationData);
             locationName.setText(locationData.getName());
@@ -221,4 +231,10 @@ public class WeatherApp extends Application {
         this.unit = unit;
     }
     
+    @Override
+    public void stop() throws Exception {
+        // executed when the application shuts down
+        this.jsonProcessor.setPreferences(preferences);
+        this.jsonProcessor.writeToFile("savedPreferences.json");
+    }
 }
