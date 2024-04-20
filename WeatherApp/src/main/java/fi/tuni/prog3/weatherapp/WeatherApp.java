@@ -19,6 +19,7 @@ import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
+import fi.tuni.prog3.weatherapp.components.DailyForecast;
 import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
@@ -38,11 +39,13 @@ public class WeatherApp extends Application {
     private SearchHistory history;
     private Label locationName;
     private String unit;
+    private DailyForecast dailyForecast;
     
     public WeatherApp() {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
         this.preferences = new Preferences(); // will change
+        this.dailyForecast = new DailyForecast();
     }
     
     @Override
@@ -53,7 +56,7 @@ public class WeatherApp extends Application {
         root.setPadding(new Insets(10, 10, 10, 10));
 
         //Adding HBox to the center of the BorderPane.
-        root.setCenter(getCenterVBox());
+        root.setCenter(dailyForecast);
 
         //Adding button to the BorderPane and aligning it to the right.
         var quitButton = getQuitButton();
@@ -199,8 +202,12 @@ public class WeatherApp extends Application {
             
             preferences.setCurrentLocation(locationData);
             changeStarColour();
-            history.addLocation(locationData);
-            locationName.setText(locationData.getName());
+            Platform.runLater(() -> {
+                 history.addLocation(locationData);
+                 locationName.setText(locationData.getName());
+                 dailyForecast.showData(forecastData);
+            });
+           
             
             
             // These objects should contain everything needed to display the information.
