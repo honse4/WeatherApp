@@ -69,8 +69,10 @@ public class SearchHistory extends VBox {
      * @return ScrollPane
      */
     private ScrollPane getScrollPane(){
-        if (preferences.getLocationSearchHistory() != null) {
-            for (LocationData data: preferences.getLocationSearchHistory()) {
+        ArrayList<LocationData> locations = new ArrayList<>(preferences.getLocationSearchHistory());
+        
+        if (!locations.isEmpty()) {
+            for (LocationData data: locations) {
                  addLocation(data);
             }
         }
@@ -97,7 +99,7 @@ public class SearchHistory extends VBox {
      * @param data LocationData to be added
      */
     public void addLocation(LocationData data) { 
-        if (preferences.getLocationSearchHistory() != null ) {
+        if (!preferences.getLocationSearchHistory().isEmpty() ) {
             deleteLocation(data);
             preferences.addLocationIntoHistory(data);
         } else {
