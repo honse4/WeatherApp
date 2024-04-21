@@ -14,6 +14,11 @@ public class Favourite extends Polygon {
     private final Preferences preferences;
     private final SearchBar search;
     
+    /**
+     * Constructor
+     * @param preferences Preferences object containing data
+     * @param search SearchBar object to display favourites
+     */
     public Favourite(Preferences preferences, SearchBar search) {
         this. preferences = preferences;
         this.search = search;
@@ -44,7 +49,11 @@ public class Favourite extends Polygon {
         
         
     } 
-        
+    
+    /**
+     * Adds a favourite or removes it
+     * @param data LocationData to be checked
+     */    
     public void pressStar(LocationData data) {
         if (!preferences.getFavouriteLocations().isEmpty()) {
             if (preferences.getFavouriteLocations().contains(data)) {
@@ -65,6 +74,10 @@ public class Favourite extends Polygon {
             
     }
     
+    /**
+     * Checks if the searched location is a favourite
+     * @param data LocationData to be checked 
+     */
     public void checkFavourite(LocationData data) {
         
         if (preferences.getFavouriteLocations() != null) {

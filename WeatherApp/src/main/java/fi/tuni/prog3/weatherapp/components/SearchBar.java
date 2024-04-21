@@ -65,7 +65,15 @@ public class SearchBar extends VBox {
         
         favouritesContainer = getFavourites();
         
-        getChildren().addAll(getBackButton(), getVBox(),favouritesContainer);
+        BackButton back = new BackButton();
+        back.setOnAction(e -> {
+            searchbar.setText("");
+            error.setText("");
+            stage.setScene(scene);
+            scene.getRoot().requestFocus();    
+        });
+        
+        getChildren().addAll(back, getVBox(),favouritesContainer);
         setSpacing(50);
         
         setOnKeyPressed(e -> {
@@ -76,33 +84,6 @@ public class SearchBar extends VBox {
                 }
             }
         });
-    }
-    
-    /**
-     * Creates the button used to go back to the main scene
-     * @return Button 
-     */
-    private Button getBackButton() {
-        SVGPath leftArrow = new SVGPath();
-        leftArrow.setContent("M 6 0 L 0 3 L 6 6 L 4.5 3 Z");
-        leftArrow.setScaleX(1.75);  
-        leftArrow.setScaleY(1.75);
-        
-        Button back = new Button();
-        back.setAlignment(Pos.CENTER);
-        back.setGraphic(leftArrow);
-        back.setMaxSize(50,30);
-        back.setFocusTraversable(false);
-        back.setMinSize(50,30);
-        
-        back.setOnAction(e -> {
-            searchbar.setText("");
-            error.setText("");
-            stage.setScene(scene);
-            scene.getRoot().requestFocus();    
-        });
-        VBox.setMargin(back, new Insets(0, -50,0, 0));
-        return back;
     }
     
     /**

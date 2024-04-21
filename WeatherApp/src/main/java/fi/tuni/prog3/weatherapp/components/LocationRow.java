@@ -14,10 +14,17 @@ import javafx.scene.text.Font;
  */
 public class LocationRow extends HBox {
     
+    /**
+     * Constructor
+     * @param name Name of the location 
+     * @param state Name of the state of the location
+     * @param delete Button which deletes the row
+     */
     public LocationRow(String name, String state, Button delete) {
         
         Label placeName = new Label(name);
         placeName.setFont(new Font("Helvetica", 14));
+        placeName.setMinWidth(50);
         
         Label stateName = new Label(state);
         stateName.setFont(new Font("Helvetica", 14));
@@ -47,6 +54,10 @@ public class LocationRow extends HBox {
         });
     }
     
+    /**
+     * Changes colour when hovering
+     * @param colour String containing colour name
+     */
     private void setColourHover(String colour){
         setStyle("-fx-border-color:black; -fx-padding: 0 25 0 20;"
                 + " -fx-border-width: 1;" + colour);

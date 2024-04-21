@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -59,8 +58,14 @@ public class SearchHistory extends VBox {
         HBox titleCenter = new HBox(title);
         titleCenter.setAlignment(Pos.CENTER);
         
+        BackButton back = new BackButton();
+        back.setOnAction(e -> {
+            getChildren().removeIf(node -> node == message);
+            stage.setScene(scene);
+            scene.getRoot().requestFocus();    
+        });
         
-        getChildren().addAll(getBackButton(), titleCenter, getScrollPane());
+        getChildren().addAll(back, titleCenter, getScrollPane());
         setSpacing(20);    
     }
     
@@ -181,33 +186,5 @@ public class SearchHistory extends VBox {
             }
         };
         new Thread(task).start();   
-    }
-    
-    /**
-     * Gets the back button and places in the top right corner using HBox
-     * @return HBox
-     */
-    private HBox getBackButton() {
-        SVGPath leftArrow = new SVGPath();
-        leftArrow.setContent("M 0 0 L 6 3 L 0 6 L 1.5 3 Z");
-        leftArrow.setScaleX(1.75);  
-        leftArrow.setScaleY(1.75);
-        
-        Button back = new Button();
-        back.setAlignment(Pos.CENTER);
-        back.setGraphic(leftArrow);
-        back.setMaxSize(50,30);
-        back.setFocusTraversable(false);
-        back.setMinSize(50,30);
-        
-        back.setOnAction(e -> {
-            getChildren().removeIf(node -> node == message);
-            stage.setScene(scene);
-            scene.getRoot().requestFocus();    
-        });
-        
-        HBox alignment = new HBox(back);
-        alignment.setAlignment(Pos.TOP_RIGHT);
-        return alignment;
     }
 }
