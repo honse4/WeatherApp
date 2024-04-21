@@ -21,6 +21,7 @@ import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.DailyForecast;
 import fi.tuni.prog3.weatherapp.components.Favourite;
+import fi.tuni.prog3.weatherapp.components.ForecastChart;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
@@ -46,6 +47,8 @@ public class WeatherApp extends Application {
     private String unit;
     private final DailyForecast dailyForecast;
     
+    private HourlyForecastData hourlyForecastData;
+    
     public WeatherApp() throws Exception {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
@@ -58,6 +61,9 @@ public class WeatherApp extends Application {
     @Override
     public void start(Stage stage) {
         
+        // Get the weather for CurrentLocation as the default
+        searchResult(this.preferences.getCurrentLocation().getName());
+        
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -65,15 +71,13 @@ public class WeatherApp extends Application {
         //Adding HBox to the center of the BorderPane.
         root.setCenter(getCenterVBox());
         
-        Scene scene = new Scene(root, 500, 700);   
-        
+        Scene scene = new Scene(root, 500, 700);
+
         root.setTop(getHeader(stage, scene));
-        
-        // Get the weather for CurrentLocation as the default
-        searchResult(this.preferences.getCurrentLocation().getName());
         
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
+        
         stage.show();
     }
 
@@ -92,11 +96,12 @@ public class WeatherApp extends Application {
         
         Units switchUnit = new Units(this, preferences);
         Button searchHistoryButton = getSearchHistory(stage, scene);
+        Button tempChartButton = getForecastChart(stage, scene, this);
         searchHistoryButton.setAlignment(Pos.TOP_LEFT);
-        HBox topLeft = new HBox(searchHistoryButton, switchUnit);
+        HBox topLeft = new HBox(searchHistoryButton,tempChartButton,switchUnit);
         topLeft.setSpacing(5);
         
-        locationName = new Label("");
+        locationName = new Label(this.preferences.getCurrentLocation().getName());
         locationName.setFont(new Font("Helvetica", 18));
         locationName.setAlignment(Pos.CENTER);
         
@@ -206,9 +211,9 @@ public class WeatherApp extends Application {
             HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData, unit);
             AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
-            
             preferences.setCurrentLocation(locationData);
-
+            this.hourlyForecastData = hourlyForecastData;
+            
             changeStarColour();
             Platform.runLater(() -> {
                  history.addLocation(locationData);
@@ -227,6 +232,17 @@ public class WeatherApp extends Application {
      */
     public void changeStarColour() {
         favourite.checkFavourite(preferences.getCurrentLocation());
+    }
+
+    public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
+        
+        Button chartButton = new Button("Forecast charts");
+        chartButton.setOnMouseClicked(e -> {   
+            ForecastChart fcChart = new ForecastChart(stage, scene, main, this.hourlyForecastData,this.unit);
+            Scene chartScene = new Scene(fcChart,500,700);
+            stage.setScene(chartScene);
+        });
+        return chartButton;  
     }
     
     /**
