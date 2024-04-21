@@ -16,9 +16,13 @@ import javafx.scene.layout.GridPane;
 public class DailyForecast extends GridPane {
     private final ArrayList<DailyForecastColumn> columns;
     
+    /**
+     * Constructor
+     */
     public DailyForecast() {
         this.columns = new ArrayList<>();
         setMinHeight(100);
+        setGridLinesVisible(true);
         
         for (int i = 0; i<5; i++) {       
             ColumnConstraints colConstraints = new ColumnConstraints();
@@ -32,7 +36,12 @@ public class DailyForecast extends GridPane {
         
     }
     
-    public void showData(ForecastData data){
+    /**
+     * Changes the data in each column
+     * @param data Daily forecast data
+     * @param unit String containing the type of unit
+     */
+    public void showData(ForecastData data, String unit){
         int i = 0;
         for(Forecast fct : data.getList()) {
             double date = fct.getDt();
@@ -40,11 +49,10 @@ public class DailyForecast extends GridPane {
             LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
             
             columns.get(i).setTime(localDate);
-            columns.get(i).setTemp(fct.getTemp());
+            columns.get(i).setTemp(fct.getTemp(), unit);
             columns.get(i).setIcon(fct.getWeather().get(0));
             
             i++;
         }
     }
-    
 }

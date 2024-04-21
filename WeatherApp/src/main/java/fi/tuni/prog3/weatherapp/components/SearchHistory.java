@@ -4,9 +4,6 @@ import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
-import javafx.animation.Animation;
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -17,12 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  *
@@ -35,9 +29,16 @@ public class SearchHistory extends VBox {
     private final Scene scene;
     private final WeatherApp main;
     private final HBox message;
-    private final Arc arc;
-    private final RotateTransition animation;
+    private final LoadingCircle loader;
+    private boolean isLoading;
     
+    /**
+     * Constructor 
+     * @param preferences Preferences object containing data
+     * @param stage Primary stage
+     * @param scene Main scene displayed to user
+     * @param main WeatherApp class
+     */
     public SearchHistory(Preferences preferences, Stage stage, Scene scene, WeatherApp main) {
         this.preferences = preferences;
         this.list = new VBox();
@@ -45,13 +46,8 @@ public class SearchHistory extends VBox {
         this.stage = stage;
         this.main = main;
         this.message = new HBox();
-        
-        arc = new Arc(20, 20, 8, 8, 0, 270);
-        arc.setFill(Color.TRANSPARENT);
-        arc.setStroke(Color.BLACK);
-        arc.setStrokeWidth(2);
-        
-        animation = animation(arc);
+        this.isLoading = false;
+        this.loader = new LoadingCircle(10, 10);
         
         message.setAlignment(Pos.CENTER);
         
@@ -65,14 +61,18 @@ public class SearchHistory extends VBox {
         
         
         getChildren().addAll(getBackButton(), titleCenter, getScrollPane());
-        setSpacing(20);
-        
-        
+        setSpacing(20);    
     }
     
+    /**
+     * Creates the ScrollPane which contains all the locations
+     * @return ScrollPane
+     */
     private ScrollPane getScrollPane(){
-        if (preferences.getLocationSearchHistory() != null) {
-            for (LocationData data: preferences.getLocationSearchHistory()) {
+        ArrayList<LocationData> locations = new ArrayList<>(preferences.getLocationSearchHistory());
+        
+        if (!locations.isEmpty()) {
+            for (LocationData data: locations) {
                  addLocation(data);
             }
         }
@@ -94,8 +94,12 @@ public class SearchHistory extends VBox {
         return favouritesContainer;
     }
     
+    /**
+     * Adds a location to search history
+     * @param data LocationData to be added
+     */
     public void addLocation(LocationData data) { 
-        if (preferences.getLocationSearchHistory() != null ) {
+        if (!preferences.getLocationSearchHistory().isEmpty() ) {
             deleteLocation(data);
             preferences.addLocationIntoHistory(data);
         } else {
@@ -106,12 +110,16 @@ public class SearchHistory extends VBox {
         
         Button delete = new Button("X");
         delete.setOnAction(e -> {
-            deleteLocation(data);
+            if(!isLoading) {
+                deleteLocation(data);
+            }
         });
         
         LocationRow row = new LocationRow(data.getName(), data.getState(), delete);
         row.setOnMouseClicked(e -> {
-            onClick(data.getName());
+            if (!isLoading) {
+                onClick(data.getName());
+            } 
         });
         
         Platform.runLater(() -> {
@@ -121,6 +129,10 @@ public class SearchHistory extends VBox {
         
     }
     
+    /**
+     * Deletes a location from search history
+     * @param data LocationData to be removed
+     */
     private void deleteLocation(LocationData data) {
         preferences.deleteLocationFromHistory(data);
         
@@ -134,11 +146,16 @@ public class SearchHistory extends VBox {
         });
     }
     
+    /**
+     * Makes the search for the location and reverts back to the main scene
+     * @param search String of location name
+     */
     private void onClick(String search) {
+        isLoading = true;
         getChildren().removeIf(node -> node == message);
         message.getChildren().removeIf(node -> node instanceof Label);
-        message.getChildren().add(arc);
-        animation.play();
+        message.getChildren().add(loader);
+        loader.play();
         getChildren().add(2, message);
         
         //
@@ -158,13 +175,18 @@ public class SearchHistory extends VBox {
                 } else {
                     message.getChildren().add(new Label("Error processing your request"));
                 }
-                animation.pause();
-                message.getChildren().removeIf(node -> node instanceof Arc);
+                loader.pause();
+                message.getChildren().removeIf(node -> node instanceof LoadingCircle);
+                isLoading = false;
             }
         };
         new Thread(task).start();   
     }
     
+    /**
+     * Gets the back button and places in the top right corner using HBox
+     * @return HBox
+     */
     private HBox getBackButton() {
         SVGPath leftArrow = new SVGPath();
         leftArrow.setContent("M 0 0 L 6 3 L 0 6 L 1.5 3 Z");
@@ -187,14 +209,5 @@ public class SearchHistory extends VBox {
         HBox alignment = new HBox(back);
         alignment.setAlignment(Pos.TOP_RIGHT);
         return alignment;
-    }
-    
-    private RotateTransition animation(Arc arc) {   
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(1), arc);
-        rotateTransition.setByAngle(360); 
-        rotateTransition.setCycleCount(Animation.INDEFINITE); 
-        rotateTransition.setInterpolator(Interpolator.LINEAR); 
-
-        return rotateTransition;
     }
 }

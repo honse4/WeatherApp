@@ -7,6 +7,7 @@ import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -87,5 +88,20 @@ public class GsonToClass {
                 ldata.getLon(), unit), HourlyForecastData.class);
         
         return hfdata;
+    }
+    
+    /**
+    * Returns preferences based on given Json-data. Creates a new empty Preferences
+    * object if the given data is null.
+    * @param jsonData Jsondata as string used to create the preferences object.
+    * @return Preferences
+    */
+    public Preferences makePreferencesObject(String jsonData) {
+        if (jsonData == null) {
+            Preferences preferences = new Preferences();
+            preferences.setCurrentLocation(locationSearch("Tampere"));
+            return preferences;
+        }
+        return this.gson.fromJson(jsonData, Preferences.class);
     }
 }

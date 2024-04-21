@@ -24,6 +24,8 @@ import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import javafx.scene.Cursor;
+import java.io.FileReader;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -34,18 +36,23 @@ import javafx.scene.text.Font;
 public class WeatherApp extends Application {
     private final GsonToClass dataGetter;
     private final Preferences preferences;
+
+    private final WeatherJsonProcessor jsonProcessor;
+    private final String PREFERENCES_FILE = "savedPreferences.json";
     private SearchBar search;
     private Favourite favourite;
     private SearchHistory history;
     private Label locationName;
     private String unit;
-    private DailyForecast dailyForecast;
+    private final DailyForecast dailyForecast;
     
-    public WeatherApp() {
+    public WeatherApp() throws Exception {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
-        this.preferences = new Preferences(); // will change
         this.dailyForecast = new DailyForecast();
+        this.jsonProcessor = new WeatherJsonProcessor();
+        String jsonData = jsonProcessor.readFromFile(PREFERENCES_FILE);
+        this.preferences = dataGetter.makePreferencesObject(jsonData);
     }
     
     @Override
@@ -56,18 +63,15 @@ public class WeatherApp extends Application {
         root.setPadding(new Insets(10, 10, 10, 10));
 
         //Adding HBox to the center of the BorderPane.
-        root.setCenter(dailyForecast);
-
-        //Adding button to the BorderPane and aligning it to the right.
-        var quitButton = getQuitButton();
-        BorderPane.setMargin(quitButton, new Insets(10, 10, 0, 10));
-        root.setBottom(quitButton);
-        BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
+        root.setCenter(getCenterVBox());
         
         Scene scene = new Scene(root, 500, 700);   
         
         root.setTop(getHeader(stage, scene));
-      
+        
+        // Get the weather for CurrentLocation as the default
+        searchResult(this.preferences.getCurrentLocation().getName());
+        
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
         stage.show();
@@ -77,6 +81,13 @@ public class WeatherApp extends Application {
         launch();
     }
     
+    /**
+     * Creates the top part of the BorderPane. Has the search history, unit change
+     * name of the location, favourites star and location search option
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return BorderPane
+     */
     private BorderPane getHeader(Stage stage, Scene scene) {
         
         Units switchUnit = new Units(this, preferences);
@@ -85,7 +96,7 @@ public class WeatherApp extends Application {
         HBox topLeft = new HBox(searchHistoryButton, switchUnit);
         topLeft.setSpacing(5);
         
-        locationName = new Label("Tampere");
+        locationName = new Label("");
         locationName.setFont(new Font("Helvetica", 18));
         locationName.setAlignment(Pos.CENTER);
         
@@ -112,7 +123,7 @@ public class WeatherApp extends Application {
         VBox centerHBox = new VBox(10);
 
         //Adding two VBox to the HBox.
-        centerHBox.getChildren().addAll(getTopHBox(), getBottomHBox());
+        centerHBox.getChildren().addAll(getTopHBox(), dailyForecast, getBottomHBox());
 
         return centerHBox;
     }
@@ -139,18 +150,12 @@ public class WeatherApp extends Application {
         return rightHBox;
     }
 
-    private Button getQuitButton() {
-        //Creating a button.
-        Button button = new Button("Quit");
-
-        //Adding an event to the button to terminate the application.
-        button.setOnAction((ActionEvent event) -> {
-            Platform.exit();
-        });
-
-        return button;
-    }
-    
+    /**
+     * Creates the SearchHistory object and a button to switch to it
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return Button
+     */
     private Button getSearchHistory(Stage stage, Scene scene) {
         history = new SearchHistory(preferences, stage, scene, this);
         Scene historyScene = new Scene(history, 500, 700);
@@ -178,8 +183,10 @@ public class WeatherApp extends Application {
         searchBar.setMaxWidth(125);
         searchBar.setMinSize(100, 20);
         searchBar.setPromptText("Search a location");
+        searchBar.setFocusTraversable(false);
         
         searchBar.setOnMouseClicked(e -> {   
+            searchBar.setCursor(Cursor.DEFAULT);
             stage.setScene(searchScene);
         });
         
@@ -201,18 +208,13 @@ public class WeatherApp extends Application {
             
             
             preferences.setCurrentLocation(locationData);
+
             changeStarColour();
             Platform.runLater(() -> {
                  history.addLocation(locationData);
                  locationName.setText(locationData.getName());
-                 dailyForecast.showData(forecastData);
-            });
-           
-            
-            
-            // These objects should contain everything needed to display the information.
-            // Maybe make some of the containers into attributes so you can change their content
-            // from here.
+                 dailyForecast.showData(forecastData, unit);
+            });      
             
             return true;
         } catch (Exception e) {
@@ -220,12 +222,25 @@ public class WeatherApp extends Application {
         }
     }
     
+    /**
+     * Checks if the current location is a part of the favourites
+     */
     public void changeStarColour() {
         favourite.checkFavourite(preferences.getCurrentLocation());
     }
     
+    /**
+     * Sets unit to either metric or imperial
+     * @param unit name of the unit
+     */
     public void setUnit(String unit) {
         this.unit = unit;
     }
     
+    @Override
+    public void stop() throws Exception {
+        // executed when the application shuts down
+        this.jsonProcessor.setPreferences(preferences);
+        this.jsonProcessor.writeToFile("savedPreferences.json");
+    }
 }
