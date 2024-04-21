@@ -11,6 +11,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
@@ -66,10 +67,10 @@ public class ForecastChart extends VBox{
     }
     
     /**
-     * Creates the button used to go back to the main scene
-     * @return Button 
+     * Creates a HBox containing a button used to go back to the main scene
+     * @return HBox
      */
-    private Button getBackButton() {
+    private HBox getBackButton() {
         SVGPath leftArrow = new SVGPath();
         leftArrow.setContent("M 0 0 L 6 3 L 0 6 L 1.5 3 Z");
         leftArrow.setScaleX(1.75);  
@@ -87,7 +88,10 @@ public class ForecastChart extends VBox{
             scene.getRoot().requestFocus();    
         });
         VBox.setMargin(back, new Insets(0, -50,0, 0));
-        return back;
+        
+        HBox alignment = new HBox(back);
+        alignment.setAlignment(Pos.TOP_RIGHT);
+        return alignment;
     }
     
 }

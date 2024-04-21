@@ -55,7 +55,7 @@ public class SearchBar extends VBox {
         favourites.setAlignment(Pos.CENTER);
         favourites.setSpacing(2);
 
-        searchbar.setMinSize(320,30);
+        searchbar.setMinSize(350,30);
         searchbar.setStyle("-fx-border-color: transparent; -fx-border-width: 0; -fx-background-color:transparent;"
                 + "-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-font-size: 14px;");
         
@@ -152,7 +152,7 @@ public class SearchBar extends VBox {
         searchRow.setAlignment(Pos.CENTER);
         searchRow.setStyle("-fx-border-color: #a0a0a0; -fx-padding: 0 0 0 5;"
                 + "-fx-border-radius: 20; -fx-border-width: 1;");
-        searchRow.setMaxSize(375, 40);
+        searchRow.setMaxSize(405, 40);
         
         VBox topRow = new VBox(searchRow, error);
         topRow.setSpacing(5);
@@ -227,7 +227,7 @@ public class SearchBar extends VBox {
         holder.setAlignment(Pos.CENTER);
         holder.setSpacing(5);
         
-        VBox.setMargin(holder, new Insets(0, 30,80,30));
+        VBox.setMargin(holder, new Insets(0, 50,80,50));
         return holder;
     }
     

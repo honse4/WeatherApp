@@ -31,7 +31,7 @@ public class LocationRow extends HBox {
         getChildren().addAll(spacer,delete);
         
         
-        setSpacing(50);
+        setSpacing(100);
         setId(name + state);
         
         setMinHeight(35);
