@@ -28,6 +28,13 @@ public class ForecastChart extends VBox{
     private final NumberAxis yAxis; // y-axis for temperatures
     private LineChart<String,Number> lineChart;
     
+    /**
+     * Constructor
+     * @param stage Primary stage
+     * @param scene Main scene displayed to user
+     * @param main WeatherApp class
+     * @param data HourlyForecastData object containing forecast data for 24 hours
+     */
     public ForecastChart(Stage stage, Scene scene, WeatherApp main, HourlyForecastData data, String unit) {
         this.stage = stage;
         this.scene = scene;
