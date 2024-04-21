@@ -61,23 +61,21 @@ public class WeatherApp extends Application {
     @Override
     public void start(Stage stage) {
         
-        // Get the weather for CurrentLocation as the default
-        searchResult(this.preferences.getCurrentLocation().getName());
+        
         
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
-
-        //Adding HBox to the center of the BorderPane.
-        root.setCenter(getCenterVBox());
         
-        Scene scene = new Scene(root, 500, 700);
+        Scene scene = new Scene(root, 600, 700);
+        root.setCenter(getCenterVBox(scene, stage));
 
         root.setTop(getHeader(stage, scene));
         
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
-        
+        // Get the weather for CurrentLocation as the default
+        searchResult(this.preferences.getCurrentLocation().getName());
         stage.show();
     }
 
@@ -96,13 +94,13 @@ public class WeatherApp extends Application {
         
         Units switchUnit = new Units(this, preferences);
         Button searchHistoryButton = getSearchHistory(stage, scene);
-        Button tempChartButton = getForecastChart(stage, scene, this);
         searchHistoryButton.setAlignment(Pos.TOP_LEFT);
-        HBox topLeft = new HBox(searchHistoryButton,tempChartButton,switchUnit);
+        HBox topLeft = new HBox(searchHistoryButton,switchUnit);
         topLeft.setSpacing(5);
         
         locationName = new Label(this.preferences.getCurrentLocation().getName());
-        locationName.setFont(new Font("Helvetica", 18));
+        locationName.setFont(new Font("Helvetica", 20));
+        locationName.setStyle("-fx-font-weight: bold;");
         locationName.setAlignment(Pos.CENTER);
         
         TextField searchBar = getSearchBar(stage, scene);
@@ -123,12 +121,16 @@ public class WeatherApp extends Application {
         return header;
     }
 
-    private VBox getCenterVBox() {
-        //Creating an HBox.
-        VBox centerHBox = new VBox(10);
+    private VBox getCenterVBox(Scene scene, Stage stage) {
+        
+        Button tempChartButton = getForecastChart(stage, scene, this);
+        tempChartButton.setFocusTraversable(false);
+        HBox chartBox = new HBox(tempChartButton);
 
         //Adding two VBox to the HBox.
-        centerHBox.getChildren().addAll(getTopHBox(), dailyForecast, getBottomHBox());
+        VBox centerHBox = new VBox(getTopHBox(),chartBox,
+                dailyForecast, getBottomHBox());
+        centerHBox.setSpacing(2);
 
         return centerHBox;
     }
@@ -136,7 +138,7 @@ public class WeatherApp extends Application {
     private HBox getTopHBox() {
         //Creating a VBox for the left side.
         HBox leftHBox = new HBox();
-        leftHBox.setPrefHeight(330);
+        leftHBox.setPrefHeight(200);
         leftHBox.setStyle("-fx-background-color: #8fc6fd;");
 
         leftHBox.getChildren().add(new Label("Top Panel"));
@@ -163,7 +165,7 @@ public class WeatherApp extends Application {
      */
     private Button getSearchHistory(Stage stage, Scene scene) {
         history = new SearchHistory(preferences, stage, scene, this);
-        Scene historyScene = new Scene(history, 500, 700);
+        Scene historyScene = new Scene(history, 600, 700);
         
         Button historySwitch = new Button("Search History");
         historySwitch.setFocusTraversable(false);
@@ -182,7 +184,7 @@ public class WeatherApp extends Application {
      */
     private TextField getSearchBar(Stage stage, Scene scene) {
         search = new SearchBar(stage, scene, this,preferences);
-        Scene searchScene = new Scene(search, 500, 700);
+        Scene searchScene = new Scene(search, 600, 700);
         
         TextField searchBar = new TextField();
         searchBar.setMaxWidth(125);
@@ -208,17 +210,17 @@ public class WeatherApp extends Application {
             LocationData locationData = dataGetter.locationSearch(location);
             WeatherData weatherData = dataGetter.weatherSearch(locationData, unit);
             ForecastData forecastData = dataGetter.forecastSearch(locationData, unit);
-            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData, unit);
+            HourlyForecastData hForecastData = dataGetter.hourlyForecastSearch(locationData, unit);
             AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
             
             preferences.setCurrentLocation(locationData);
-            this.hourlyForecastData = hourlyForecastData;
+            this.hourlyForecastData = hForecastData;
             
-            changeStarColour();
             Platform.runLater(() -> {
-                 history.addLocation(locationData);
-                 locationName.setText(locationData.getName());
-                 dailyForecast.showData(forecastData, unit);
+                changeStarColour();
+                history.addLocation(locationData);
+                locationName.setText(locationData.getName());
+                dailyForecast.showData(forecastData, unit);
             });      
             
             return true;
@@ -239,7 +241,7 @@ public class WeatherApp extends Application {
         Button chartButton = new Button("Forecast charts");
         chartButton.setOnMouseClicked(e -> {   
             ForecastChart fcChart = new ForecastChart(stage, scene, main, this.hourlyForecastData,this.unit);
-            Scene chartScene = new Scene(fcChart,500,700);
+            Scene chartScene = new Scene(fcChart,600,700);
             stage.setScene(chartScene);
         });
         return chartButton;  

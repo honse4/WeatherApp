@@ -1,6 +1,7 @@
 package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
@@ -9,6 +10,7 @@ import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,11 +99,23 @@ public class GsonToClass {
     * @return Preferences
     */
     public Preferences makePreferencesObject(String jsonData) {
-        if (jsonData == null) {
+
+        try {
+            if (jsonData == null || jsonData.isBlank()) {
+               Preferences preferences = new Preferences();
+               preferences.setCurrentLocation(locationSearch("Tampere"));
+               preferences.setFavouriteLocations(new ArrayList());
+               preferences.setLocationSearchHistory(new ArrayList());
+               return preferences;
+            }
+            return this.gson.fromJson(jsonData, Preferences.class);
+        } catch (JsonSyntaxException e) {
             Preferences preferences = new Preferences();
             preferences.setCurrentLocation(locationSearch("Tampere"));
+            preferences.setFavouriteLocations(new ArrayList());
+            preferences.setLocationSearchHistory(new ArrayList());
             return preferences;
         }
-        return this.gson.fromJson(jsonData, Preferences.class);
+        
     }
 }
