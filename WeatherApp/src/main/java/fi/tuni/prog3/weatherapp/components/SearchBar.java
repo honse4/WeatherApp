@@ -3,9 +3,6 @@ package fi.tuni.prog3.weatherapp.components;
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
-import javafx.animation.Animation;
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,12 +14,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  *
@@ -36,9 +30,9 @@ public class SearchBar extends VBox {
     private final Label error;
     private final Preferences preferences;
     private final VBox favourites;
-    private final Arc arc;
-    private final RotateTransition animation;
+    private final LoadingCircle loader;
     private final VBox favouritesContainer;
+    private boolean isLoading;
     
     /**
      * Constructor for the search bar.
@@ -54,18 +48,13 @@ public class SearchBar extends VBox {
         this.searchbar = new TextField();
         this.error = new Label("");
         this.favourites = new VBox();
-        this.preferences = preferences; 
+        this.preferences = preferences;
+        this.loader = new LoadingCircle(10, 10);
+        this.isLoading = false;
         
         favourites.setAlignment(Pos.CENTER);
         favourites.setSpacing(2);
 
-        arc = new Arc(20, 20, 8, 8, 0, 270);
-        arc.setFill(Color.TRANSPARENT);
-        arc.setStroke(Color.BLACK);
-        arc.setStrokeWidth(2);
-        
-        this.animation = animation(arc);
-        
         searchbar.setMinSize(320,30);
         searchbar.setStyle("-fx-border-color: transparent; -fx-border-width: 0; -fx-background-color:transparent;"
                 + "-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-font-size: 14px;");
@@ -81,8 +70,10 @@ public class SearchBar extends VBox {
         
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                String search = searchbar.getText();
-                onClick(search);
+                if(!isLoading) {
+                    String search = searchbar.getText();
+                    onClick(search);
+                }
             }
         });
     }
@@ -132,8 +123,10 @@ public class SearchBar extends VBox {
         searchButton.setStyle("-fx-background-radius: 0 20 20 0;");
         
         searchButton.setOnAction(e -> {
-            String search = searchbar.getText();
-            onClick(search);
+            if(!isLoading) {
+                String search = searchbar.getText();
+                onClick(search);
+            }
         });
         
         VBox topRow = getTopRow(searchbar, searchButton, error);
@@ -173,11 +166,12 @@ public class SearchBar extends VBox {
      * for the api call and the main thread continues the other code. 
      */
     private void onClick(String search) {
+        isLoading = true;
         searchbar.setText("");
         error.setText("");
         
-        favouritesContainer.getChildren().add(0, arc);
-        animation.play();
+        favouritesContainer.getChildren().add(0, loader);
+        loader.play();
         
         //
         Task<Boolean> task = new Task<Boolean>() {
@@ -195,8 +189,9 @@ public class SearchBar extends VBox {
                 } else {
                     error.setText("Place Does Not Exist");
                 }
-                animation.pause();
-                favouritesContainer.getChildren().remove(arc);
+                loader.pause();
+                favouritesContainer.getChildren().remove(loader);
+                isLoading = false;
             }
         };
         new Thread(task).start();   
@@ -208,7 +203,7 @@ public class SearchBar extends VBox {
      */
     private VBox getFavourites() {
         
-        if (preferences.getFavouriteLocations() != null) {
+        if (preferences.getFavouriteLocations() != null && !preferences.getFavouriteLocations().isEmpty()) {
             for (LocationData data: preferences.getFavouriteLocations()) {
                  addFavourite(data);
             }
@@ -217,18 +212,18 @@ public class SearchBar extends VBox {
             favourites.getChildren().add(new Label("No favourites added yet"));
         }
         
-        ScrollPane favouritesContainer = new ScrollPane();
-        favouritesContainer.setFitToHeight(true);
-        favouritesContainer.setFitToWidth(true);
-        favouritesContainer.setContent(favourites);
-        favouritesContainer.setStyle("-fx-background-color: transparent; "
+        ScrollPane favouritesScroll = new ScrollPane();
+        favouritesScroll.setFitToHeight(true);
+        favouritesScroll.setFitToWidth(true);
+        favouritesScroll.setContent(favourites);
+        favouritesScroll.setStyle("-fx-background-color: transparent; "
         + "-fx-border-color: transparent; -fx-padding: 10 7 10 7; "
         + "-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
         
         Label title = new Label("Favourites");
         title.setFont(new Font("Helvetica", 16));
         
-        VBox holder = new VBox(title, favouritesContainer);
+        VBox holder = new VBox(title, favouritesScroll);
         holder.setAlignment(Pos.CENTER);
         holder.setSpacing(5);
         
@@ -269,14 +264,4 @@ public class SearchBar extends VBox {
             favourites.getChildren().add(new Label("No favourites added yet"));
         }
     }
-    
-    private RotateTransition animation(Arc arc) {   
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(1), arc);
-        rotateTransition.setByAngle(360); 
-        rotateTransition.setCycleCount(Animation.INDEFINITE); 
-        rotateTransition.setInterpolator(Interpolator.LINEAR); 
-
-        return rotateTransition;
-    }
-
 }
