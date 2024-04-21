@@ -6,6 +6,7 @@ import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -25,9 +26,7 @@ public class ForecastChart extends VBox{
     private final Stage stage;
     private final Scene scene;
     private final WeatherApp main;
-    private final CategoryAxis xAxis;  // x-axis for time
-    private final NumberAxis yAxis; // y-axis for temperatures
-    private LineChart<String,Number> lineChart;
+    private final String unit;
     
     /**
      * Constructor
@@ -41,29 +40,10 @@ public class ForecastChart extends VBox{
         this.scene = scene;
         this.main = main;
         this.data = data;
+        this.unit = unit;
         
-        xAxis = new CategoryAxis();
-        xAxis.setLabel("Time");
-        yAxis = new NumberAxis();
-        String tempUnit = ("metric".equals(unit)) ? "celsius" : "fahrenheit";
-        yAxis.setLabel(tempUnit);
-        
-        lineChart = new LineChart<>(xAxis,yAxis);
-        lineChart.setTitle("Temperatures for following 24 hours");
-        
-        XYChart.Series series = new XYChart.Series();
-        series.setName("Temperatures");
-        
-        if (data != null) {
-            for (var forecastdata : this.data.getList()) {
-                series.getData().add(new XYChart.Data(forecastdata.getDt_txt(), 
-                                                  forecastdata.getMain().getTemp()));
-            }
-        }
 
-        lineChart.getData().add(series);
-
-        getChildren().addAll(getBackButton(),lineChart);
+        getChildren().addAll(getBackButton(),getTemperatureChart(), getRainChart());
     }
     
     /**
@@ -94,4 +74,63 @@ public class ForecastChart extends VBox{
         return alignment;
     }
     
+    /**
+     * Creates LineChart object showing temperature in given unit
+     * @return LineChart
+     */
+    private LineChart<String,Number> getTemperatureChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Time");
+        NumberAxis yAxis = new NumberAxis();
+        String tempUnit = ("metric".equals(this.unit)) ? "celsius" : "fahrenheit";
+        yAxis.setLabel(tempUnit);
+        
+        LineChart<String,Number> lineChart = new LineChart<>(xAxis,yAxis);
+        lineChart.setTitle("Temperatures for following 24 hours");
+        
+        XYChart.Series series = new XYChart.Series();
+        series.setName("Temperatures");
+        
+        if (data != null) {
+            for (var forecastdata : this.data.getList()) {
+                String time = forecastdata.getDt_txt();
+                Double temperature = forecastdata.getMain().getTemp();
+                series.getData().add(new XYChart.Data(time, temperature));
+            }
+        }
+        lineChart.getData().add(series);
+        return lineChart;
+    }
+    
+    /**
+     * Creates Barchart object showing rainfall in given unit
+     * @return BarChart
+     */
+    private BarChart<String,Number> getRainChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Time");
+        NumberAxis yAxis = new NumberAxis();
+        String measureUnit = ("metric".equals(this.unit)) ? "mm" : "inches";
+        yAxis.setLabel(measureUnit);
+        
+       BarChart<String,Number> barChart = new BarChart<>(xAxis,yAxis);
+        barChart.setTitle("Rainfall for following 24 hours");
+        
+        XYChart.Series series = new XYChart.Series();
+        series.setName("Rainfall");
+        
+        if (data != null) {
+            for (var forecastdata : this.data.getList()) {
+                String time = forecastdata.getDt_txt();
+                        
+                // TODO: Something seems to go wrong in creating the Rain class (is null), needs a fix
+                Double rain = (forecastdata.getRain() == null) ? 2.0 : 
+                          ((forecastdata.getRain().get1h() != null) ? forecastdata.getRain().get1h() : 1.0);
+                
+                series.getData().add(new XYChart.Data(time,rain));
+            }
+        }
+        barChart.getData().addAll(series);
+        return barChart;
+    }   
 }
