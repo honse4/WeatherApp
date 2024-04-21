@@ -2,6 +2,7 @@ package fi.tuni.prog3.weatherapp.preferencesgson;
 
 import java.util.List;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import java.util.ArrayList;
 
 /**
  *
@@ -35,14 +36,23 @@ public class Preferences {
     }
 
     public List<LocationData> getLocationSearchHistory() {
+        if (locationSearchHistory == null) {
+            return new ArrayList<>();
+        }
         return locationSearchHistory;
     }
 
     public List<LocationData> getFavouriteLocations() {
+        if (favouriteLocations == null) {
+            return new ArrayList<>();
+        }
         return favouriteLocations;
     }
     
     public void addLocationIntoHistory(LocationData newLocation) {
+        if (this.locationSearchHistory == null) {
+            this.locationSearchHistory = new ArrayList<>();
+        }
         this.locationSearchHistory.add(newLocation);
     }
     
@@ -51,6 +61,9 @@ public class Preferences {
     }
 
     public void addFavouriteLocations(LocationData newFavourite) {
+        if (this.favouriteLocations == null) {
+            this.locationSearchHistory = new ArrayList<>();
+        }
         this.favouriteLocations.add(newFavourite);
     }
     

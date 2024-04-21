@@ -3,6 +3,9 @@ package fi.tuni.prog3.weatherapp.components;
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,9 +17,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -28,9 +34,11 @@ public class SearchBar extends VBox {
     private final WeatherApp main;
     private final TextField searchbar;
     private final Label error;
-    private final HBox loading ;
     private final Preferences preferences;
     private final VBox favourites;
+    private final Arc arc;
+    private final RotateTransition animation;
+    private final VBox favouritesContainer;
     
     /**
      * Constructor for the search bar.
@@ -45,14 +53,18 @@ public class SearchBar extends VBox {
         this.main = main;
         this.searchbar = new TextField();
         this.error = new Label("");
-        this.loading = new HBox(new Label("Loading..."));
         this.favourites = new VBox();
         this.preferences = preferences; 
         
         favourites.setAlignment(Pos.CENTER);
         favourites.setSpacing(2);
 
-        loading.setAlignment(Pos.CENTER);
+        arc = new Arc(20, 20, 8, 8, 0, 270);
+        arc.setFill(Color.TRANSPARENT);
+        arc.setStroke(Color.BLACK);
+        arc.setStrokeWidth(2);
+        
+        this.animation = animation(arc);
         
         searchbar.setMinSize(320,30);
         searchbar.setStyle("-fx-border-color: transparent; -fx-border-width: 0; -fx-background-color:transparent;"
@@ -62,7 +74,9 @@ public class SearchBar extends VBox {
         error.setMinWidth(200);
         error.setStyle("-fx-text-fill: #ff0000;");
         
-        getChildren().addAll(getBackButton(), getVBox(),getFavourites());
+        favouritesContainer = getFavourites();
+        
+        getChildren().addAll(getBackButton(), getVBox(),favouritesContainer);
         setSpacing(50);
         
         setOnKeyPressed(e -> {
@@ -162,7 +176,8 @@ public class SearchBar extends VBox {
         searchbar.setText("");
         error.setText("");
         
-        getChildren().add(2, loading);
+        favouritesContainer.getChildren().add(0, arc);
+        animation.play();
         
         //
         Task<Boolean> task = new Task<Boolean>() {
@@ -180,7 +195,8 @@ public class SearchBar extends VBox {
                 } else {
                     error.setText("Place Does Not Exist");
                 }
-                getChildren().remove(loading);
+                animation.pause();
+                favouritesContainer.getChildren().remove(arc);
             }
         };
         new Thread(task).start();   
@@ -252,6 +268,15 @@ public class SearchBar extends VBox {
         if (favourites.getChildren().isEmpty()) {
             favourites.getChildren().add(new Label("No favourites added yet"));
         }
+    }
+    
+    private RotateTransition animation(Arc arc) {   
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(1), arc);
+        rotateTransition.setByAngle(360); 
+        rotateTransition.setCycleCount(Animation.INDEFINITE); 
+        rotateTransition.setInterpolator(Interpolator.LINEAR); 
+
+        return rotateTransition;
     }
 
 }
