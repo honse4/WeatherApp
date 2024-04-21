@@ -24,6 +24,8 @@ import fi.tuni.prog3.weatherapp.components.ForecastChart;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import javafx.scene.Cursor;
+import java.io.FileReader;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
@@ -86,6 +88,13 @@ public class WeatherApp extends Application {
         launch();
     }
     
+    /**
+     * Creates the top part of the BorderPane. Has the search history, unit change
+     * name of the location, favourites star and location search option
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return BorderPane
+     */
     private BorderPane getHeader(Stage stage, Scene scene) {
         
         Units switchUnit = new Units(this, preferences);
@@ -161,6 +170,12 @@ public class WeatherApp extends Application {
         return button;
     }
     
+    /**
+     * Creates the SearchHistory object and a button to switch to it
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return Button
+     */
     private Button getSearchHistory(Stage stage, Scene scene) {
         history = new SearchHistory(preferences, stage, scene, this);
         Scene historyScene = new Scene(history, 500, 700);
@@ -190,6 +205,7 @@ public class WeatherApp extends Application {
         searchBar.setPromptText("Search a location");
         
         searchBar.setOnMouseClicked(e -> {   
+            searchBar.setCursor(Cursor.DEFAULT);
             stage.setScene(searchScene);
         });
         
@@ -227,10 +243,12 @@ public class WeatherApp extends Application {
         }
     }
     
+    /**
+     * Checks if the current location is a part of the favourites
+     */
     public void changeStarColour() {
         favourite.checkFavourite(preferences.getCurrentLocation());
     }
-    
 
     public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
         
@@ -243,6 +261,10 @@ public class WeatherApp extends Application {
         return chartButton;  
     }
     
+    /**
+     * Sets unit to either metric or imperial
+     * @param unit name of the unit
+     */
     public void setUnit(String unit) {
         this.unit = unit;
     }

@@ -2,17 +2,11 @@ package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
-import javafx.animation.Animation;
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
 import javafx.scene.text.Font;
-import javafx.util.Duration;
 
 /**
  *
@@ -23,41 +17,44 @@ public class Units extends HBox{
     private boolean isMetric;
     private final Button changeMetric;
     private final Label message;
-    private final RotateTransition animation;
-    private final Preferences preferences;
+    private final LoadingCircle loader;
+    private boolean isLoading;
     
+    /**
+     * Constructor
+     * @param main The main class
+     * @param preferences Preferences object used to store data
+     */
     public Units(WeatherApp main, Preferences preferences) {
         this.main = main;
         this.isMetric = true;
-        this.preferences = preferences;
-        
-        Arc arc = new Arc(20, 20, 8, 8, 0, 270);
-        arc.setFill(Color.TRANSPARENT);
-        arc.setStroke(Color.BLACK);
-        arc.setStrokeWidth(2);
+        this.loader = new LoadingCircle(8, 8);
+        this.isLoading = false;
         
         this.changeMetric = new Button("Imperial");
         changeMetric.setOnAction(e -> {
-            main.setUnit(isMetric ? "imperial" : "metric");
-            onClick(preferences.getCurrentLocation().getName(), arc);
+            if(!isLoading) {
+                main.setUnit(isMetric ? "imperial" : "metric");
+                onClick(preferences.getCurrentLocation().getName());
+            } 
         });
         changeMetric.setFocusTraversable(false);
         
         this.message = new Label();
         message.setFont(new Font("Calibri", 10));
 
-        this.animation = animation(arc);
         getChildren().add(changeMetric);
-        
-        
         setSpacing(2);
-        
     }
     
-    private void onClick(String search, Arc arc) {
-        
-        getChildren().add(arc);
-        animation.play();
+    /**
+     * Changes the metric and gets the data in the new metric
+     * @param search String of the location name
+     */
+    private void onClick(String search) {
+        isLoading = true;
+        getChildren().add(loader);
+        loader.play();
         
         //
         Task<Boolean> task = new Task<Boolean>() {
@@ -77,20 +74,11 @@ public class Units extends HBox{
                     getChildren().add(message);
                     message.setText("An error occured");
                 }
-                animation.pause();
-                getChildren().remove(arc);
-                
+                loader.pause();
+                getChildren().remove(loader);
+                isLoading = false;
             }
         };
         new Thread(task).start();   
-    }
-    
-    private RotateTransition animation(Arc arc) {   
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(1), arc);
-        rotateTransition.setByAngle(360); 
-        rotateTransition.setCycleCount(Animation.INDEFINITE); 
-        rotateTransition.setInterpolator(Interpolator.LINEAR); 
-
-        return rotateTransition;
     }
 }
