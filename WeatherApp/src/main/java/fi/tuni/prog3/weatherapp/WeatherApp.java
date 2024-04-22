@@ -22,6 +22,7 @@ import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import fi.tuni.prog3.weatherapp.components.DailyForecast;
 import fi.tuni.prog3.weatherapp.components.Favourite;
 import fi.tuni.prog3.weatherapp.components.ForecastChart;
+import fi.tuni.prog3.weatherapp.components.HourlyForecastDisplay;
 import fi.tuni.prog3.weatherapp.components.SearchHistory;
 import fi.tuni.prog3.weatherapp.components.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
@@ -46,6 +47,7 @@ public class WeatherApp extends Application {
     private Label locationName;
     private String unit;
     private final DailyForecast dailyForecast;
+    private final HourlyForecastDisplay hourlyForecast;
     
     private HourlyForecastData hourlyForecastData;
     
@@ -53,6 +55,7 @@ public class WeatherApp extends Application {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
         this.dailyForecast = new DailyForecast();
+        this.hourlyForecast = new HourlyForecastDisplay();
         this.jsonProcessor = new WeatherJsonProcessor();
         String jsonData = jsonProcessor.readFromFile(PREFERENCES_FILE);
         this.preferences = dataGetter.makePreferencesObject(jsonData);
@@ -129,7 +132,7 @@ public class WeatherApp extends Application {
 
         //Adding two VBox to the HBox.
         VBox centerHBox = new VBox(getTopHBox(),chartBox,
-                dailyForecast, getBottomHBox());
+                dailyForecast, hourlyForecast);
         centerHBox.setSpacing(2);
 
         return centerHBox;
@@ -221,6 +224,7 @@ public class WeatherApp extends Application {
                 history.addLocation(locationData);
                 locationName.setText(locationData.getName());
                 dailyForecast.showData(forecastData, unit);
+                hourlyForecast.showData(hForecastData, unit);
             });      
             
             return true;

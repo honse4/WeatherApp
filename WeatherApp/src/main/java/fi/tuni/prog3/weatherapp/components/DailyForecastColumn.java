@@ -27,7 +27,7 @@ public class DailyForecastColumn extends VBox{
         getChildren().addAll(createDateLabels(), createIcon(), createTemperatureLabels());
         setSpacing(5);
         
-        setStyle("-fx-background-color: #fffafa;");
+        setStyle("-fx-background-color: #f0f0f0;");
     }
     
     /**
@@ -66,7 +66,7 @@ public class DailyForecastColumn extends VBox{
      */
     private VBox createTemperatureLabels() {
         Label minLabel = new Label("Min: ");
-        minLabel.setFont(new Font("Arial", 12));      
+        minLabel.setFont(new Font("Tahoma", 12));      
         minTemperature = new Label();
         minTemperature.setFont(new Font("Helvetica", 12));
         
@@ -74,7 +74,7 @@ public class DailyForecastColumn extends VBox{
         minBox.setAlignment(Pos.CENTER);
         
         Label maxLabel = new Label("Max: ");
-        maxLabel.setFont(new Font("Arial", 12));
+        maxLabel.setFont(new Font("Tahoma", 12));
         maxTemperature = new Label();
         maxTemperature.setFont(new Font("Helvetica", 12));
         
