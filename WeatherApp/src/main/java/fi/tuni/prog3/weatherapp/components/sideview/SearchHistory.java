@@ -1,7 +1,9 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.sideview;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.components.supplement.BackButton;
+import fi.tuni.prog3.weatherapp.components.supplement.LoadingCircle;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
 import javafx.application.Platform;

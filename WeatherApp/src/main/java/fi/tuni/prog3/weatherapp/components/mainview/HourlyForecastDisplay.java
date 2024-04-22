@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.mainview;
 
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecast;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 
@@ -19,6 +20,7 @@ public class HourlyForecastDisplay extends ScrollPane {
     public HourlyForecastDisplay() {
         setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         setVbarPolicy(ScrollBarPolicy.NEVER);
+        setPadding(new Insets(5,0,5,0)); 
         HBox container = new HBox();
         this.columns = new ArrayList<>();
         

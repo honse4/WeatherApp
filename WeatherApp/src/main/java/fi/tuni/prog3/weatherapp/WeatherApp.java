@@ -1,7 +1,7 @@
 package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
-import fi.tuni.prog3.weatherapp.components.SearchBar;
+import fi.tuni.prog3.weatherapp.components.sideview.SearchBar;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -19,12 +19,12 @@ import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
-import fi.tuni.prog3.weatherapp.components.DailyForecast;
-import fi.tuni.prog3.weatherapp.components.Favourite;
-import fi.tuni.prog3.weatherapp.components.ForecastChart;
-import fi.tuni.prog3.weatherapp.components.HourlyForecastDisplay;
-import fi.tuni.prog3.weatherapp.components.SearchHistory;
-import fi.tuni.prog3.weatherapp.components.Units;
+import fi.tuni.prog3.weatherapp.components.mainview.DailyForecast;
+import fi.tuni.prog3.weatherapp.components.supplement.Favourite;
+import fi.tuni.prog3.weatherapp.components.sideview.ForecastChart;
+import fi.tuni.prog3.weatherapp.components.mainview.HourlyForecastDisplay;
+import fi.tuni.prog3.weatherapp.components.sideview.SearchHistory;
+import fi.tuni.prog3.weatherapp.components.supplement.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.Cursor;
 import java.io.FileReader;
@@ -38,9 +38,9 @@ import javafx.scene.text.Font;
 public class WeatherApp extends Application {
     private final GsonToClass dataGetter;
     private final Preferences preferences;
-
     private final WeatherJsonProcessor jsonProcessor;
     private final String PREFERENCES_FILE = "savedPreferences.json";
+    
     private SearchBar search;
     private Favourite favourite;
     private SearchHistory history;
@@ -48,7 +48,6 @@ public class WeatherApp extends Application {
     private String unit;
     private final DailyForecast dailyForecast;
     private final HourlyForecastDisplay hourlyForecast;
-    
     private HourlyForecastData hourlyForecastData;
     
     public WeatherApp() throws Exception {
@@ -63,9 +62,7 @@ public class WeatherApp extends Application {
     
     @Override
     public void start(Stage stage) {
-        
-        
-        
+
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -124,6 +121,12 @@ public class WeatherApp extends Application {
         return header;
     }
 
+    /**
+     * Creates the VBox placed at the center of the BorderPane
+     * @param scene Main scene shown to the user
+     * @param stage Primary stage
+     * @return VBox
+     */
     private VBox getCenterVBox(Scene scene, Stage stage) {
         
         Button tempChartButton = getForecastChart(stage, scene, this);
@@ -147,17 +150,6 @@ public class WeatherApp extends Application {
         leftHBox.getChildren().add(new Label("Top Panel"));
 
         return leftHBox;
-    }
-
-    private HBox getBottomHBox() {
-        //Creating a VBox for the right side.
-        HBox rightHBox = new HBox();
-        rightHBox.setPrefHeight(330);
-        rightHBox.setStyle("-fx-background-color: #b1c2d4;");
-
-        rightHBox.getChildren().add(new Label("Bottom Panel"));
-
-        return rightHBox;
     }
 
     /**
@@ -203,10 +195,36 @@ public class WeatherApp extends Application {
         return searchBar;
     }
     
+    public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
+        
+        Button chartButton = new Button("Forecast charts");
+        chartButton.setOnMouseClicked(e -> {   
+            ForecastChart fcChart = new ForecastChart(stage, scene, main, this.hourlyForecastData,this.unit);
+            Scene chartScene = new Scene(fcChart,600,700);
+            stage.setScene(chartScene);
+        });
+        return chartButton;  
+    }
+    
     /**
-     * 
-     * @param location
-     * @return 
+     * Sets unit to either metric or imperial
+     * @param unit name of the unit
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        // executed when the application shuts down
+        this.jsonProcessor.setPreferences(preferences);
+        this.jsonProcessor.writeToFile("savedPreferences.json");
+    }
+    
+    /**
+     * Calls api for data and uses it to show data to the user
+     * @param location Location searched by the user
+     * @return Boolean
      */
     public boolean searchResult(String location) {
         try {
@@ -238,31 +256,5 @@ public class WeatherApp extends Application {
      */
     public void changeStarColour() {
         favourite.checkFavourite(preferences.getCurrentLocation());
-    }
-
-    public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
-        
-        Button chartButton = new Button("Forecast charts");
-        chartButton.setOnMouseClicked(e -> {   
-            ForecastChart fcChart = new ForecastChart(stage, scene, main, this.hourlyForecastData,this.unit);
-            Scene chartScene = new Scene(fcChart,600,700);
-            stage.setScene(chartScene);
-        });
-        return chartButton;  
-    }
-    
-    /**
-     * Sets unit to either metric or imperial
-     * @param unit name of the unit
-     */
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-    
-    @Override
-    public void stop() throws Exception {
-        // executed when the application shuts down
-        this.jsonProcessor.setPreferences(preferences);
-        this.jsonProcessor.writeToFile("savedPreferences.json");
     }
 }

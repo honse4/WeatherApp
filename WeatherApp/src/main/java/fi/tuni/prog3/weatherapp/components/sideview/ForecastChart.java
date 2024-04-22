@@ -1,8 +1,9 @@
 
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.sideview;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
+import fi.tuni.prog3.weatherapp.components.supplement.BackButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

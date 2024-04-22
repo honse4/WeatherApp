@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.sideview;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

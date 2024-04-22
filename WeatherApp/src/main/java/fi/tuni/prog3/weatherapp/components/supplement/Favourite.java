@@ -1,6 +1,7 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.supplement;
 
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.components.sideview.SearchBar;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;

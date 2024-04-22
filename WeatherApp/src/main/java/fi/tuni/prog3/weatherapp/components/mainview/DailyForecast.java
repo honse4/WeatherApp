@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.mainview;
 
 import fi.tuni.prog3.weatherapp.apigson.forecast.Forecast;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import javafx.geometry.Insets;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
@@ -23,6 +24,7 @@ public class DailyForecast extends GridPane {
         this.columns = new ArrayList<>();
         setMinHeight(100);
         setGridLinesVisible(true);
+        setPadding(new Insets(5,0,5,0)); 
         
         for (int i = 0; i<5; i++) {       
             ColumnConstraints colConstraints = new ColumnConstraints();

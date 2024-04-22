@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.mainview;
 
 import fi.tuni.prog3.weatherapp.apigson.weather.Main;
 import fi.tuni.prog3.weatherapp.apigson.weather.Weather;

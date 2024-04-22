@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.supplement;
 
 import fi.tuni.prog3.weatherapp.WeatherApp;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;

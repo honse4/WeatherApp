@@ -1,4 +1,4 @@
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.supplement;
 
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
