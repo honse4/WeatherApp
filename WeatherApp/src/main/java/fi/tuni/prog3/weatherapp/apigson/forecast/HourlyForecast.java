@@ -16,6 +16,7 @@ public class HourlyForecast {
     private Main main;
     private List<Weather> weather;
     private Wind wind;
+    private Double pop;
     private Rain rain;
     private String dt_txt;
 
@@ -49,6 +50,14 @@ public class HourlyForecast {
 
     public void setWind(Wind wind) {
         this.wind = wind;
+    }
+    
+    public Double getPop() {
+        return pop;
+    }
+
+    public void setPop(Double pop) {
+        this.pop = pop;
     }
 
     public Rain getRain() {
