@@ -170,7 +170,7 @@ public class SearchBar extends VBox {
                     stage.setScene(scene);
                     scene.getRoot().requestFocus();
                 } else {
-                    error.setText("Place Does Not Exist");
+                    error.setText("Error processing your request");
                 }
                 loader.pause();
                 favouritesContainer.getChildren().remove(loader);

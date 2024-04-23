@@ -15,10 +15,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 /**
@@ -38,6 +35,7 @@ public class ForecastChart extends VBox{
      * @param scene Main scene displayed to user
      * @param main WeatherApp class
      * @param data HourlyForecastData object containing forecast data for 24 hours
+     * @param unit
      */
     public ForecastChart(Stage stage, Scene scene, WeatherApp main, HourlyForecastData data, String unit) {
         this.stage = stage;
@@ -46,38 +44,14 @@ public class ForecastChart extends VBox{
         this.data = data;
         this.unit = unit;
         
-
-        getChildren().addAll(getBackButton(),getTemperatureChart(), getRainChart(), getWindChart());
-    }
-    
-    /**
-     * Creates a HBox containing a button used to go back to the main scene
-     * @return HBox
-     */
-    private HBox getBackButton() {
-        SVGPath leftArrow = new SVGPath();
-        leftArrow.setContent("M 0 0 L 6 3 L 0 6 L 1.5 3 Z");
-        leftArrow.setScaleX(1.75);  
-        leftArrow.setScaleY(1.75);
-        
-        Button back = new Button();
-        back.setAlignment(Pos.CENTER);
-        back.setGraphic(leftArrow);
-        back.setMaxSize(50,30);
-        back.setFocusTraversable(false);
-        back.setMinSize(50,30);
-        
+        BackButton back = new BackButton();
         back.setOnAction(e -> {
             stage.setScene(scene);
             scene.getRoot().requestFocus();    
         });
-
-        VBox.setMargin(back, new Insets(0, -50,0, 0));
-        
-        HBox alignment = new HBox(back);
-        alignment.setAlignment(Pos.TOP_RIGHT);
-        return alignment;
+        getChildren().addAll(back,getTemperatureChart(), getRainChart(), getWindChart());
     }
+    
     
     /**
      * Creates LineChart object showing temperature in given unit

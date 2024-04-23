@@ -32,6 +32,7 @@ import java.io.FileReader;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import java.io.FileNotFoundException;
+
 /**
  * JavaFX Weather Application.
  */
@@ -231,7 +232,7 @@ public class WeatherApp extends Application {
             this.hourlyForecastData = hForecastData;
             
             Platform.runLater(() -> {
-                currentWeatherBox.updateValues(weatherData, airQualityData, forecastData);
+                currentWeatherBox.updateValues(weatherData, airQualityData, forecastData, unit);
                 changeStarColour();
                 history.addLocation(locationData);
                 locationName.setText(locationData.getName());
@@ -245,9 +246,9 @@ public class WeatherApp extends Application {
         }
     }
     
-    public LocationData getCurrentLocation() {
-        return preferences.getCurrentLocation();
-    }
+//    public LocationData getCurrentLocation() {
+//        return preferences.getCurrentLocation();
+//    }
 
     
     /**
