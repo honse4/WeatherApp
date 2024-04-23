@@ -45,9 +45,17 @@ public class Preferences {
     public void addLocationIntoHistory(LocationData newLocation) {
         this.locationSearchHistory.add(newLocation);
     }
+    
+    public void deleteLocationFromHistory(LocationData location) {
+        this.locationSearchHistory.remove(location);
+    }
 
     public void addFavouriteLocations(LocationData newFavourite) {
         this.favouriteLocations.add(newFavourite);
+    }
+    
+    public void deleteFavouriteLocations(LocationData data){
+        this.favouriteLocations.remove(data);
     }
     
     @Override

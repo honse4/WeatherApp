@@ -18,23 +18,37 @@ import javafx.stage.Stage;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Type;
-import java.util.List;
+import fi.tuni.prog3.weatherapp.components.Favourite;
+import fi.tuni.prog3.weatherapp.components.SearchHistory;
+import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
 import javafx.scene.control.TextField;
-
+import javafx.scene.text.Font;
 
 /**
  * JavaFX Weather Application.
  */
 public class WeatherApp extends Application {
-    private GsonToClass dataGetter;
+
+    private final GsonToClass dataGetter;
+    private final Preferences preferences;
+    private LocationData currentLocation;
+    private SearchBar search;
+    private Favourite favourite;
+    private SearchHistory history;
+    private Label locationName;
     private CurrentWeatherDisplay currentWeatherBox;
+
+    public WeatherApp() {
+        this.dataGetter = new GsonToClass();
+        this.preferences = new Preferences(); // will change
+    }
 
     @Override
     public void start(Stage stage) throws FileNotFoundException {
-        this.dataGetter = new GsonToClass();
+
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -47,11 +61,11 @@ public class WeatherApp extends Application {
         BorderPane.setMargin(quitButton, new Insets(10, 10, 0, 10));
         root.setBottom(quitButton);
         BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
-        
-        Scene scene = new Scene(root, 500, 700);     
-        TextField searchBar = getSearchBar(stage, scene);
-        root.setTop(searchBar);
-        BorderPane.setAlignment(searchBar, Pos.TOP_RIGHT);
+
+        Scene scene = new Scene(root, 500, 700);
+
+        root.setTop(getHeader(stage, scene));
+        //BorderPane.setAlignment(top, Pos.TOP_RIGHT);
 
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
@@ -62,12 +76,39 @@ public class WeatherApp extends Application {
         launch();
     }
 
+    private BorderPane getHeader(Stage stage, Scene scene) {
+
+        Button searchHistoryButton = getSearchHistory(stage, scene);
+        searchHistoryButton.setAlignment(Pos.TOP_LEFT);
+
+        locationName = new Label("Tampere");
+        locationName.setFont(new Font("Helvetica", 18));
+        locationName.setAlignment(Pos.CENTER);
+
+        TextField searchBar = getSearchBar(stage, scene);
+
+        favourite = new Favourite(preferences, search);
+        favourite.setOnMousePressed(e -> {
+            favourite.pressStar(currentLocation);
+        });
+
+        HBox topRight = new HBox(favourite, searchBar);
+        topRight.setAlignment(Pos.TOP_RIGHT);
+        topRight.setSpacing(10);
+
+        BorderPane header = new BorderPane();
+        header.setLeft(searchHistoryButton);
+        header.setCenter(locationName);
+        header.setRight(topRight);
+        return header;
+    }
+
     private VBox getCenterVBox() throws FileNotFoundException {
         //Creating an HBox.
         VBox centerHBox = new VBox(10);
 
         //Adding two VBox to the HBox.
-        centerHBox.getChildren().addAll(getCurrentWeatherBox(),getTopHBox(), getBottomHBox() );
+        centerHBox.getChildren().addAll(getCurrentWeatherBox(), getTopHBox(), getBottomHBox());
 
         return centerHBox;
     }
@@ -106,15 +147,28 @@ public class WeatherApp extends Application {
         return button;
     }
 
-    
+    private Button getSearchHistory(Stage stage, Scene scene) {
+        history = new SearchHistory(preferences, stage, scene, this);
+        Scene historyScene = new Scene(history, 500, 700);
+
+        Button historySwitch = new Button("Search History");
+        historySwitch.setFocusTraversable(false);
+        historySwitch.setOnAction(e -> {
+            stage.setScene(historyScene);
+        });
+
+        return historySwitch;
+    }
+
     /**
      * Gets placeholder search bar which redirects to search page
-     * @param stage Primary stage 
+     *
+     * @param stage Primary stage
      * @param scene The main scene
      * @return TextField
      */
     private TextField getSearchBar(Stage stage, Scene scene) {
-        SearchBar search = new SearchBar(stage, scene, this);
+        search = new SearchBar(stage, scene, this, preferences);
         Scene searchScene = new Scene(search, 500, 700);
 
         TextField searchBar = new TextField();
@@ -128,11 +182,11 @@ public class WeatherApp extends Application {
 
         return searchBar;
     }
-    
+
     /**
-     * 
+     *
      * @param location
-     * @return 
+     * @return
      */
     public boolean searchResult(String location) {
         try {
@@ -140,21 +194,35 @@ public class WeatherApp extends Application {
             WeatherData weatherData = dataGetter.weatherSearch(locationData);
             ForecastData forecastData = dataGetter.forecastSearch(locationData);
             HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
 
-            currentWeatherBox.updateValues(locationData, weatherData);
-            
+            currentLocation = locationData;
+            changeStarColour();
+            history.addLocation(currentLocation);
+            locationName.setText(currentLocation.getName());
+            currentWeatherBox.updateValues(locationData, weatherData, airQualityData);
+
             // These objects should contain everything needed to display the information.
             // Maybe make some of the containers into attributes so you can change their content
             // from here.
             return true;
         } catch (Exception e) {
             return false;
-        }   
+        }
     }
 
     private VBox getCurrentWeatherBox() throws FileNotFoundException {
-       currentWeatherBox = new CurrentWeatherDisplay();
-       return currentWeatherBox.getCurrentWeatherDisplay();
-        
+        currentWeatherBox = new CurrentWeatherDisplay();
+        return currentWeatherBox.getCurrentWeatherDisplay();
+
     }
+
+    public LocationData getCurrentLocation() {
+        return this.currentLocation;
+    }
+
+    public void changeStarColour() {
+        favourite.checkFavourite(currentLocation);
+    }
+
 }

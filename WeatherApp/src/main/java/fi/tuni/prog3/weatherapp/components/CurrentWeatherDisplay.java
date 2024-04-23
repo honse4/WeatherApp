@@ -5,6 +5,7 @@
 package fi.tuni.prog3.weatherapp.components;
 
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +35,10 @@ public class CurrentWeatherDisplay extends VBox {
     Label windLabel;
     Label feelsLikeContentLabel;
     Label rainLabel;
+    Label airQualityContentLabel;
+    
+    InputStream stream;
+    ImageView imageView;
     
     public CurrentWeatherDisplay() throws FileNotFoundException {
         Font boldFont = Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 13);
@@ -56,10 +61,10 @@ public class CurrentWeatherDisplay extends VBox {
         currentTemperatureLabel.setFont(currentTemperatureFont);
         currentTemperatureUnitLabel.setFont(currentTemperatureFont);
         
-        InputStream stream = new FileInputStream("rain-cloud.png");
+        stream = new FileInputStream("rain-cloud.png");
         Image image = new Image(stream);
         //Creating the image view
-        ImageView imageView = new ImageView();
+        imageView = new ImageView();
         //Setting image to the image view
         imageView.setImage(image);
         //Setting the image view parameters
@@ -80,7 +85,7 @@ public class CurrentWeatherDisplay extends VBox {
         
         HBox weatherDetailsBox = new HBox();
         Label airQualityLabel = new Label("Air Quality: ");
-        Label airQualityContentLabel = new Label("Good");
+        airQualityContentLabel = new Label("Good");
         airQualityContentLabel.setFont(boldFont);
         HBox.setMargin(airQualityContentLabel, new Insets(0, 20, 0, 0));
         SVGPath dropSVG = new SVGPath();
@@ -122,13 +127,20 @@ public class CurrentWeatherDisplay extends VBox {
         
     }
     
-    public void updateValues(LocationData ldata, WeatherData wdata) {
+    public void updateValues(LocationData ldata, WeatherData wdata, AirQualityData airQualityData) throws FileNotFoundException {
         windLabel.setText(wdata.getWind().getSpeed().toString());
         Double temperature = wdata.getMain().getTemp() - 273.15;
         currentTemperatureLabel.setText(String.format("%.1f", temperature));
         Double feelsLikeTemperature = wdata.getMain().getFeels_like() - 273.15;
         feelsLikeContentLabel.setText(String.format("%.1f", feelsLikeTemperature));
         currentLocationLabel.setText(ldata.getName());
+        airQualityContentLabel.setText(airQualityData.getList().get(0).getMain().getAqi().toString());
+
+        stream = new FileInputStream(String.format("%s.png", wdata.getWeather().get(0).getDescription()).replace(' ', '-').replace('/', '-'));
+        Image image = new Image(stream);
+        //Creating the image view
+        imageView.setImage(image);
+        //Setting the image view parameters
     }
     
 }

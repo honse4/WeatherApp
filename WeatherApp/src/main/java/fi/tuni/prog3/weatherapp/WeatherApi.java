@@ -103,7 +103,36 @@ public class WeatherApi implements iAPI{
             
         }
         return null;
+    }
     
+    /**
+     * Returns air quality for given coordinates
+     * @param lat The latitude of the location
+     * @param lon The longitude of the location
+     * @return String
+     */
+    @Override
+    public String getAirQuality(double lat, double lon) {
+        String parameters = String.format("lat=%f&lon=%f&appid=%s",lat,lon, API_ID);
+        try {
+            URL url = new URL("http://api.openweathermap.org/data/2.5/air_pollution?" + parameters);
+            
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                responseReader.lines().forEach(line -> content.append(line).append("\n"));
+            }
+
+            conn.disconnect();
+            return content.toString();
+        } catch (IOException e) {
+            
+        }
+        return null;
     }
     
     /**
