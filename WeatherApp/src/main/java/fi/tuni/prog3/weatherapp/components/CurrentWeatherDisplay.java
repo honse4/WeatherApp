@@ -29,6 +29,8 @@ import javafx.scene.text.FontWeight;
  */
 public class CurrentWeatherDisplay extends VBox {
     
+    private final static String DEGREE_SYMBOL = "\u00B0";
+    
     VBox currentWeatherBox;
     Label currentLocationLabel;
     Label currentTemperatureLabel;
@@ -36,6 +38,10 @@ public class CurrentWeatherDisplay extends VBox {
     Label feelsLikeContentLabel;
     Label rainLabel;
     Label airQualityContentLabel;
+    
+    Label currentTemperatureUnitLabel;
+    Label feelsLikeUnitLabel;
+    Label windUnitLabel;
     
     InputStream stream;
     ImageView imageView;
@@ -57,7 +63,7 @@ public class CurrentWeatherDisplay extends VBox {
         HBox currentTemperatureBox = new HBox();
         Font currentTemperatureFont = Font.font("Verdana", FontWeight.NORMAL, FontPosture.REGULAR, 50);
         currentTemperatureLabel = new Label("-5");
-        Label currentTemperatureUnitLabel = new Label(" °C");
+        currentTemperatureUnitLabel = new Label(" °C");
         currentTemperatureLabel.setFont(currentTemperatureFont);
         currentTemperatureUnitLabel.setFont(currentTemperatureFont);
         
@@ -79,7 +85,7 @@ public class CurrentWeatherDisplay extends VBox {
         Label feelsLikeLabel = new Label("Feels like: ");
         feelsLikeContentLabel = new Label("-10");
         feelsLikeContentLabel.setFont(boldFont);
-        Label feelsLikeUnitLabel = new Label(" °C");
+        feelsLikeUnitLabel = new Label(" °C");
         feelsLikeBox.getChildren().addAll(feelsLikeLabel, feelsLikeContentLabel, feelsLikeUnitLabel);
         feelsLikeBox.setAlignment(Pos.CENTER);
         
@@ -113,7 +119,7 @@ public class CurrentWeatherDisplay extends VBox {
         windShape.setStyle("-fx-background-color: black;");
         HBox.setMargin(windShape, new Insets(0, 0, 0, 0));
         windLabel = new Label("0.0");
-        Label windUnitLabel = new Label(" m/s");
+        windUnitLabel = new Label(" m/s");
         windLabel.setFont(boldFont);
         weatherDetailsBox.getChildren().addAll(airQualityLabel, airQualityContentLabel, dropShape, rainLabel, rainUnitLabel, windShape, windLabel, windUnitLabel);
         weatherDetailsBox.setAlignment(Pos.CENTER);
@@ -127,7 +133,7 @@ public class CurrentWeatherDisplay extends VBox {
         
     }
     
-    public void updateValues(LocationData ldata, WeatherData wdata, AirQualityData airQualityData) throws FileNotFoundException {
+    public void updateValues(LocationData ldata, WeatherData wdata, AirQualityData airQualityData, String unit) throws FileNotFoundException {
         windLabel.setText(wdata.getWind().getSpeed().toString());
         Double temperature = wdata.getMain().getTemp();
         currentTemperatureLabel.setText(String.format("%.1f", temperature));
@@ -136,6 +142,10 @@ public class CurrentWeatherDisplay extends VBox {
         currentLocationLabel.setText(ldata.getName());
         airQualityContentLabel.setText(airQualityData.getList().get(0).getMain().getAqi().toString());
 
+        currentTemperatureUnitLabel.setText(DEGREE_SYMBOL + (unit.contentEquals("metric") ? "C" : "F"));
+        feelsLikeUnitLabel.setText(DEGREE_SYMBOL + (unit.contentEquals("metric") ? "C" : "F"));
+        windUnitLabel.setText(unit.contentEquals("metric") ? "m/s" : "mph");
+                
         stream = new FileInputStream(String.format("weatherSet\\%s.png", wdata.getWeather().get(0).getDescription()).replace(' ', '-').replace('/', '-'));
         Image image = new Image(stream);
         //Creating the image view
