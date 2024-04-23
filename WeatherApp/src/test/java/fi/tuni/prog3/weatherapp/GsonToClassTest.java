@@ -1,12 +1,6 @@
 package fi.tuni.prog3.weatherapp;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
-import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
-import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
-import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,11 +53,12 @@ public class GsonToClassTest {
     public void testWeatherSearch() {
         System.out.println("weatherSearch");
         LocationData ldata = new LocationData();
+        String unit = "metric";
         ldata.setLat(Double.MAX_VALUE);
         ldata.setLon(Double.MAX_VALUE);
         GsonToClass instance = new GsonToClass();
         assertThrows(Exception.class, () -> {
-            instance.weatherSearch(ldata).getMain();
+            instance.weatherSearch(ldata, unit).getMain();
         });
     }
 
@@ -74,11 +69,12 @@ public class GsonToClassTest {
     public void testForecastSearch() {
         System.out.println("forecastSearch");
         LocationData ldata = new LocationData();
+        String unit = "metric";
         ldata.setLat(Double.MAX_VALUE);
         ldata.setLon(Double.MAX_VALUE);
         GsonToClass instance = new GsonToClass(); 
         assertThrows(Exception.class, () -> {
-            instance.forecastSearch(ldata).getList();
+            instance.forecastSearch(ldata, unit).getList();
         });
     }
 
@@ -104,11 +100,12 @@ public class GsonToClassTest {
     public void testHourlyForecastSearch() {
         System.out.println("hourlyForecastSearch");
         LocationData ldata = new LocationData();
+        String unit = "metric";
         ldata.setLat(Double.MAX_VALUE);
         ldata.setLon(Double.MAX_VALUE);
         GsonToClass instance = new GsonToClass();
         assertThrows(Exception.class, () -> {
-            instance.hourlyForecastSearch(ldata).getList();
+            instance.hourlyForecastSearch(ldata, unit).getList();
         });
     }
     

@@ -1,7 +1,7 @@
 package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
-import fi.tuni.prog3.weatherapp.components.SearchBar;
+import fi.tuni.prog3.weatherapp.components.sideview.SearchBar;
 import fi.tuni.prog3.weatherapp.components.CurrentWeatherDisplay;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,13 +20,18 @@ import fi.tuni.prog3.weatherapp.apigson.forecast.HourlyForecastData;
 import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
-import java.io.FileNotFoundException;
-import fi.tuni.prog3.weatherapp.components.Favourite;
-import fi.tuni.prog3.weatherapp.components.SearchHistory;
+import fi.tuni.prog3.weatherapp.components.mainview.DailyForecast;
+import fi.tuni.prog3.weatherapp.components.supplement.Favourite;
+import fi.tuni.prog3.weatherapp.components.sideview.ForecastChart;
+import fi.tuni.prog3.weatherapp.components.mainview.HourlyForecastDisplay;
+import fi.tuni.prog3.weatherapp.components.sideview.SearchHistory;
+import fi.tuni.prog3.weatherapp.components.supplement.Units;
 import fi.tuni.prog3.weatherapp.preferencesgson.Preferences;
+import javafx.scene.Cursor;
+import java.io.FileReader;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
-
+import java.io.FileNotFoundException;
 /**
  * JavaFX Weather Application.
  */
@@ -34,16 +39,27 @@ public class WeatherApp extends Application {
 
     private final GsonToClass dataGetter;
     private final Preferences preferences;
-    private LocationData currentLocation;
+    private final WeatherJsonProcessor jsonProcessor;
+    private final String PREFERENCES_FILE = "savedPreferences.json";
+    
     private SearchBar search;
     private Favourite favourite;
     private SearchHistory history;
     private Label locationName;
+    private String unit;
     private CurrentWeatherDisplay currentWeatherBox;
-
-    public WeatherApp() {
+    private final DailyForecast dailyForecast;
+    private final HourlyForecastDisplay hourlyForecast;
+    private HourlyForecastData hourlyForecastData;
+    
+    public WeatherApp() throws Exception {
         this.dataGetter = new GsonToClass();
-        this.preferences = new Preferences(); // will change
+        this.unit = "metric";
+        this.dailyForecast = new DailyForecast();
+        this.hourlyForecast = new HourlyForecastDisplay();
+        this.jsonProcessor = new WeatherJsonProcessor();
+        String jsonData = jsonProcessor.readFromFile(PREFERENCES_FILE);
+        this.preferences = dataGetter.makePreferencesObject(jsonData);
     }
 
     @Override
@@ -52,44 +68,48 @@ public class WeatherApp extends Application {
         //Creating a new BorderPane.
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10, 10, 10, 10));
-
-        //Adding HBox to the center of the BorderPane.
-        root.setCenter(getCenterVBox());
-
-        //Adding button to the BorderPane and aligning it to the right.
-        var quitButton = getQuitButton();
-        BorderPane.setMargin(quitButton, new Insets(10, 10, 0, 10));
-        root.setBottom(quitButton);
-        BorderPane.setAlignment(quitButton, Pos.TOP_RIGHT);
-
-        Scene scene = new Scene(root, 500, 700);
+        
+        Scene scene = new Scene(root, 600, 700);
+        root.setCenter(getCenterVBox(scene, stage));
 
         root.setTop(getHeader(stage, scene));
-        //BorderPane.setAlignment(top, Pos.TOP_RIGHT);
-
+        
         stage.setScene(scene);
         stage.setTitle("WeatherApp");
+        // Get the weather for CurrentLocation as the default
+        searchResult(this.preferences.getCurrentLocation().getName());
         stage.show();
     }
 
     public static void main(String[] args) {
         launch();
     }
-
+    
+    /**
+     * Creates the top part of the BorderPane. Has the search history, unit change
+     * name of the location, favourites star and location search option
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return BorderPane
+     */
     private BorderPane getHeader(Stage stage, Scene scene) {
-
+        
+        Units switchUnit = new Units(this, preferences);
         Button searchHistoryButton = getSearchHistory(stage, scene);
         searchHistoryButton.setAlignment(Pos.TOP_LEFT);
-
-        locationName = new Label("Tampere");
-        locationName.setFont(new Font("Helvetica", 18));
+        HBox topLeft = new HBox(searchHistoryButton,switchUnit);
+        topLeft.setSpacing(5);
+        
+        locationName = new Label(this.preferences.getCurrentLocation().getName());
+        locationName.setFont(new Font("Helvetica", 20));
+        locationName.setStyle("-fx-font-weight: bold;");
         locationName.setAlignment(Pos.CENTER);
 
         TextField searchBar = getSearchBar(stage, scene);
 
         favourite = new Favourite(preferences, search);
-        favourite.setOnMousePressed(e -> {
-            favourite.pressStar(currentLocation);
+        favourite.setOnMousePressed(e ->{
+            favourite.pressStar(preferences.getCurrentLocation());
         });
 
         HBox topRight = new HBox(favourite, searchBar);
@@ -97,18 +117,28 @@ public class WeatherApp extends Application {
         topRight.setSpacing(10);
 
         BorderPane header = new BorderPane();
-        header.setLeft(searchHistoryButton);
+        header.setLeft(topLeft);
         header.setCenter(locationName);
         header.setRight(topRight);
         return header;
     }
 
-    private VBox getCenterVBox() throws FileNotFoundException {
-        //Creating an HBox.
-        VBox centerHBox = new VBox(10);
+    /**
+     * Creates the VBox placed at the center of the BorderPane
+     * @param scene Main scene shown to the user
+     * @param stage Primary stage
+     * @return VBox
+     */
+    private VBox getCenterVBox(Scene scene, Stage stage) throws FileNotFoundException {
+        
+        Button tempChartButton = getForecastChart(stage, scene, this);
+        tempChartButton.setFocusTraversable(false);
+        HBox chartBox = new HBox(tempChartButton);
 
         //Adding two VBox to the HBox.
-        centerHBox.getChildren().addAll(getCurrentWeatherBox(), getTopHBox(), getBottomHBox());
+        VBox centerHBox = new VBox(getCurrentWeatherBox(),getTopHBox(),chartBox,
+                dailyForecast, hourlyForecast);
+        centerHBox.setSpacing(2);
 
         return centerHBox;
     }
@@ -116,7 +146,7 @@ public class WeatherApp extends Application {
     private HBox getTopHBox() {
         //Creating a VBox for the left side.
         HBox leftHBox = new HBox();
-        leftHBox.setPrefHeight(330);
+        leftHBox.setPrefHeight(200);
         leftHBox.setStyle("-fx-background-color: #8fc6fd;");
 
         leftHBox.getChildren().add(new Label("Top Panel"));
@@ -124,33 +154,16 @@ public class WeatherApp extends Application {
         return leftHBox;
     }
 
-    private HBox getBottomHBox() {
-        //Creating a VBox for the right side.
-        HBox rightHBox = new HBox();
-        rightHBox.setPrefHeight(330);
-        rightHBox.setStyle("-fx-background-color: #b1c2d4;");
-
-        rightHBox.getChildren().add(new Label("Bottom Panel"));
-
-        return rightHBox;
-    }
-
-    private Button getQuitButton() {
-        //Creating a button.
-        Button button = new Button("Quit");
-
-        //Adding an event to the button to terminate the application.
-        button.setOnAction((ActionEvent event) -> {
-            Platform.exit();
-        });
-
-        return button;
-    }
-
+    /**
+     * Creates the SearchHistory object and a button to switch to it
+     * @param stage The main stage
+     * @param scene The main scene shown to users
+     * @return Button
+     */
     private Button getSearchHistory(Stage stage, Scene scene) {
         history = new SearchHistory(preferences, stage, scene, this);
-        Scene historyScene = new Scene(history, 500, 700);
-
+        Scene historyScene = new Scene(history, 600, 700);
+        
         Button historySwitch = new Button("Search History");
         historySwitch.setFocusTraversable(false);
         historySwitch.setOnAction(e -> {
@@ -168,43 +181,73 @@ public class WeatherApp extends Application {
      * @return TextField
      */
     private TextField getSearchBar(Stage stage, Scene scene) {
-        search = new SearchBar(stage, scene, this, preferences);
-        Scene searchScene = new Scene(search, 500, 700);
-
+        search = new SearchBar(stage, scene, this,preferences);
+        Scene searchScene = new Scene(search, 600, 700);
+        
         TextField searchBar = new TextField();
         searchBar.setMaxWidth(125);
         searchBar.setMinSize(100, 20);
         searchBar.setPromptText("Search a location");
-
-        searchBar.setOnMouseClicked(e -> {
+        searchBar.setFocusTraversable(false);
+        
+        searchBar.setOnMouseClicked(e -> {   
+            searchBar.setCursor(Cursor.DEFAULT);
             stage.setScene(searchScene);
         });
 
         return searchBar;
     }
-
+    
+    public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
+        
+        Button chartButton = new Button("Forecast charts");
+        chartButton.setOnMouseClicked(e -> {   
+            ForecastChart fcChart = new ForecastChart(stage, scene, main, this.hourlyForecastData,this.unit);
+            Scene chartScene = new Scene(fcChart,600,700);
+            stage.setScene(chartScene);
+        });
+        return chartButton;  
+    }
+    
     /**
-     *
-     * @param location
-     * @return
+     * Sets unit to either metric or imperial
+     * @param unit name of the unit
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
+    @Override
+    public void stop() throws Exception {
+        // executed when the application shuts down
+        this.jsonProcessor.setPreferences(preferences);
+        this.jsonProcessor.writeToFile("savedPreferences.json");
+    }
+    
+    /**
+     * Calls api for data and uses it to show data to the user
+     * @param location Location searched by the user
+     * @return Boolean
      */
     public boolean searchResult(String location) {
         try {
             LocationData locationData = dataGetter.locationSearch(location);
-            WeatherData weatherData = dataGetter.weatherSearch(locationData);
-            ForecastData forecastData = dataGetter.forecastSearch(locationData);
-            HourlyForecastData hourlyForecastData = dataGetter.hourlyForecastSearch(locationData);
+            WeatherData weatherData = dataGetter.weatherSearch(locationData, unit);
+            ForecastData forecastData = dataGetter.forecastSearch(locationData, unit);
+            HourlyForecastData hForecastData = dataGetter.hourlyForecastSearch(locationData, unit);
             AirQualityData airQualityData = dataGetter.qualitySearch(locationData);
-
-            currentLocation = locationData;
-            changeStarColour();
-            history.addLocation(currentLocation);
-            locationName.setText(currentLocation.getName());
+            
+            preferences.setCurrentLocation(locationData);
+            this.hourlyForecastData = hForecastData;
             currentWeatherBox.updateValues(locationData, weatherData, airQualityData);
-
-            // These objects should contain everything needed to display the information.
-            // Maybe make some of the containers into attributes so you can change their content
-            // from here.
+            Platform.runLater(() -> {
+                changeStarColour();
+                history.addLocation(locationData);
+                locationName.setText(locationData.getName());
+                dailyForecast.showData(forecastData, unit);
+                hourlyForecast.showData(hForecastData, unit);
+            });      
+            
             return true;
         } catch (Exception e) {
             return false;
@@ -218,11 +261,14 @@ public class WeatherApp extends Application {
     }
 
     public LocationData getCurrentLocation() {
-        return this.currentLocation;
+        return preferences.getCurrentLocation();
     }
 
+    
+    /**
+     * Checks if the current location is a part of the favourites
+     */
     public void changeStarColour() {
-        favourite.checkFavourite(currentLocation);
+        favourite.checkFavourite(preferences.getCurrentLocation());
     }
-
 }

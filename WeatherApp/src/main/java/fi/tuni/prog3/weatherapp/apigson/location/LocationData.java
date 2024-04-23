@@ -19,6 +19,9 @@ public class LocationData {
     public LocationData() {}
 
     public String getName() {
+        if (name == null) {
+            return "Tampere";
+        }
         return name;
     }
 

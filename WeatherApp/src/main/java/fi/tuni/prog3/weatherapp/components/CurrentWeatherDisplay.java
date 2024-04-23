@@ -61,7 +61,7 @@ public class CurrentWeatherDisplay extends VBox {
         currentTemperatureLabel.setFont(currentTemperatureFont);
         currentTemperatureUnitLabel.setFont(currentTemperatureFont);
         
-        stream = new FileInputStream("rain-cloud.png");
+        stream = new FileInputStream("weatherSet\\few-clouds.png");
         Image image = new Image(stream);
         //Creating the image view
         imageView = new ImageView();
@@ -129,14 +129,14 @@ public class CurrentWeatherDisplay extends VBox {
     
     public void updateValues(LocationData ldata, WeatherData wdata, AirQualityData airQualityData) throws FileNotFoundException {
         windLabel.setText(wdata.getWind().getSpeed().toString());
-        Double temperature = wdata.getMain().getTemp() - 273.15;
+        Double temperature = wdata.getMain().getTemp();
         currentTemperatureLabel.setText(String.format("%.1f", temperature));
-        Double feelsLikeTemperature = wdata.getMain().getFeels_like() - 273.15;
+        Double feelsLikeTemperature = wdata.getMain().getFeels_like();
         feelsLikeContentLabel.setText(String.format("%.1f", feelsLikeTemperature));
         currentLocationLabel.setText(ldata.getName());
         airQualityContentLabel.setText(airQualityData.getList().get(0).getMain().getAqi().toString());
 
-        stream = new FileInputStream(String.format("%s.png", wdata.getWeather().get(0).getDescription()).replace(' ', '-').replace('/', '-'));
+        stream = new FileInputStream(String.format("weatherSet\\%s.png", wdata.getWeather().get(0).getDescription()).replace(' ', '-').replace('/', '-'));
         Image image = new Image(stream);
         //Creating the image view
         imageView.setImage(image);

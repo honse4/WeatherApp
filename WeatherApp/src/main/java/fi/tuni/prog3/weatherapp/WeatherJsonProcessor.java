@@ -27,10 +27,11 @@ public class WeatherJsonProcessor implements iReadAndWriteToFile {
      */
     @Override
     public String readFromFile(String fileName) throws Exception {
-        FileInputStream file = new FileInputStream(fileName);
-        StringBuilder content = new StringBuilder();
-        try (BufferedReader responseReader = new BufferedReader(new InputStreamReader(file))) {
-            responseReader.lines().forEach(line -> content.append(line).append("\n"));
+        try {
+            FileInputStream file = new FileInputStream(fileName);
+            BufferedReader responseReader = new BufferedReader(new InputStreamReader(file));
+            StringBuilder content = new StringBuilder();
+            responseReader.lines().forEach(line -> content.append(line));
             file.close();
             return content.toString();
         } catch (FileNotFoundException e) {
