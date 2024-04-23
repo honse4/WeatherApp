@@ -2,6 +2,7 @@ package fi.tuni.prog3.weatherapp.components.mainview;
 
 import fi.tuni.prog3.weatherapp.apigson.forecast.Forecast;
 import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
+import java.io.FileNotFoundException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -49,10 +50,10 @@ public class DailyForecast extends GridPane {
             double date = fct.getDt();
             Instant instant = Instant.ofEpochSecond((long) date);
             LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-            
-            columns.get(i).setTime(localDate);
-            columns.get(i).setTemp(fct.getTemp(), unit);
-            columns.get(i).setIcon(fct.getWeather().get(0));
+            DailyForecastColumn column = columns.get(i);
+            column.setTime(localDate);
+            column.setTemp(fct.getTemp(), unit);
+            column.setIcon(fct.getWeather().get(0));
             
             i++;
         }

@@ -32,20 +32,21 @@ public class HourlyForecastDisplay extends ScrollPane {
         setContent(container);
         setFitToHeight(true);
         setFitToWidth(true);
+        setStyle("-fx-background-color: #e9e9e9;");
     }
     
-    public void showData(HourlyForecastData data, String unit) {
+    public void showData(HourlyForecastData data) {
         int i = 0;
         for(HourlyForecast fct: data.getList()) {
             long unixTimeMillis = fct.getDt().longValue() * 1000L;
             LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(unixTimeMillis), ZoneOffset.UTC);
             HourlyForecastColumn column = columns.get(i);
             column.setTime(dateTime);
-            column.setTemp(fct.getMain(), unit);
+            column.setTemp(fct.getMain());
             column.setWind(fct.getWind());
             column.setRain(fct.getPop());
             column.setHumidity(fct.getMain());
-            
+            column.setIcon(fct.getWeather().get(0));
             i++;
         }
     }

@@ -2,7 +2,7 @@ package fi.tuni.prog3.weatherapp;
 
 import com.google.gson.Gson;
 import fi.tuni.prog3.weatherapp.components.sideview.SearchBar;
-import fi.tuni.prog3.weatherapp.components.CurrentWeatherDisplay;
+import fi.tuni.prog3.weatherapp.components.mainview.CurrentWeatherDisplay;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -47,7 +47,7 @@ public class WeatherApp extends Application {
     private SearchHistory history;
     private Label locationName;
     private String unit;
-    private CurrentWeatherDisplay currentWeatherBox;
+    private final CurrentWeatherDisplay currentWeatherBox;
     private final DailyForecast dailyForecast;
     private final HourlyForecastDisplay hourlyForecast;
     private HourlyForecastData hourlyForecastData;
@@ -60,6 +60,7 @@ public class WeatherApp extends Application {
         this.jsonProcessor = new WeatherJsonProcessor();
         String jsonData = jsonProcessor.readFromFile(PREFERENCES_FILE);
         this.preferences = dataGetter.makePreferencesObject(jsonData);
+        this.currentWeatherBox = new CurrentWeatherDisplay();
     }
 
     @Override
@@ -136,22 +137,11 @@ public class WeatherApp extends Application {
         HBox chartBox = new HBox(tempChartButton);
 
         //Adding two VBox to the HBox.
-        VBox centerHBox = new VBox(getCurrentWeatherBox(),getTopHBox(),chartBox,
+        VBox centerHBox = new VBox(currentWeatherBox,chartBox,
                 dailyForecast, hourlyForecast);
         centerHBox.setSpacing(2);
 
         return centerHBox;
-    }
-
-    private HBox getTopHBox() {
-        //Creating a VBox for the left side.
-        HBox leftHBox = new HBox();
-        leftHBox.setPrefHeight(200);
-        leftHBox.setStyle("-fx-background-color: #8fc6fd;");
-
-        leftHBox.getChildren().add(new Label("Top Panel"));
-
-        return leftHBox;
     }
 
     /**
@@ -239,13 +229,14 @@ public class WeatherApp extends Application {
             
             preferences.setCurrentLocation(locationData);
             this.hourlyForecastData = hForecastData;
-            currentWeatherBox.updateValues(locationData, weatherData, airQualityData);
+            
             Platform.runLater(() -> {
+                currentWeatherBox.updateValues(weatherData, airQualityData, forecastData);
                 changeStarColour();
                 history.addLocation(locationData);
                 locationName.setText(locationData.getName());
                 dailyForecast.showData(forecastData, unit);
-                hourlyForecast.showData(hForecastData, unit);
+                hourlyForecast.showData(hForecastData);
             });      
             
             return true;
@@ -253,13 +244,7 @@ public class WeatherApp extends Application {
             return false;
         }
     }
-
-    private VBox getCurrentWeatherBox() throws FileNotFoundException {
-        currentWeatherBox = new CurrentWeatherDisplay();
-        return currentWeatherBox.getCurrentWeatherDisplay();
-
-    }
-
+    
     public LocationData getCurrentLocation() {
         return preferences.getCurrentLocation();
     }

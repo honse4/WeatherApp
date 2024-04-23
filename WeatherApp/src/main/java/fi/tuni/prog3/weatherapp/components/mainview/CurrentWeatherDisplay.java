@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package fi.tuni.prog3.weatherapp.components;
+package fi.tuni.prog3.weatherapp.components.mainview;
 
-import fi.tuni.prog3.weatherapp.apigson.location.LocationData;
+import fi.tuni.prog3.weatherapp.apigson.forecast.ForecastData;
 import fi.tuni.prog3.weatherapp.apigson.weather.AirQualityData;
 import fi.tuni.prog3.weatherapp.apigson.weather.WeatherData;
 import java.io.FileInputStream;
@@ -29,8 +29,7 @@ import javafx.scene.text.FontWeight;
  */
 public class CurrentWeatherDisplay extends VBox {
     
-    VBox currentWeatherBox;
-    Label currentLocationLabel;
+    //VBox currentWeatherBox;
     Label currentTemperatureLabel;
     Label windLabel;
     Label feelsLikeContentLabel;
@@ -41,16 +40,12 @@ public class CurrentWeatherDisplay extends VBox {
     ImageView imageView;
     
     public CurrentWeatherDisplay() throws FileNotFoundException {
-        Font boldFont = Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 13);
-        Font titleFont = Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 20);
+        Font boldFont = Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 14);
         //Creating a VBox for the left side.
-        currentWeatherBox = new VBox(6);
-        currentWeatherBox.setPrefHeight(330);
-        currentWeatherBox.setStyle("-fx-background-color: #41ac44;");
-        
-        currentLocationLabel = new Label("Current Location");
-        currentLocationLabel.setFont(titleFont);
-        
+        setStyle("-fx-background-color: #41ac44;");
+        setPadding(new Insets(15,0,15,0));
+        setSpacing(15);
+                
         Label currentWeatherLabel = new Label("Current Weather");
         currentWeatherLabel.setFont(boldFont);
         
@@ -118,29 +113,48 @@ public class CurrentWeatherDisplay extends VBox {
         weatherDetailsBox.getChildren().addAll(airQualityLabel, airQualityContentLabel, dropShape, rainLabel, rainUnitLabel, windShape, windLabel, windUnitLabel);
         weatherDetailsBox.setAlignment(Pos.CENTER);
         
-        currentWeatherBox.getChildren().addAll(currentLocationLabel, currentWeatherLabel, currentTemperatureBox, feelsLikeBox, weatherDetailsBox);
-        currentWeatherBox.setAlignment(Pos.TOP_CENTER);
+        getChildren().addAll( currentWeatherLabel, currentTemperatureBox, feelsLikeBox, weatherDetailsBox);
+        setAlignment(Pos.TOP_CENTER);
     }
-    
-    public VBox getCurrentWeatherDisplay() {
-        return currentWeatherBox;
         
-    }
-    
-    public void updateValues(LocationData ldata, WeatherData wdata, AirQualityData airQualityData) throws FileNotFoundException {
+    public void updateValues(WeatherData wdata, AirQualityData airQualityData, ForecastData fdata){
         windLabel.setText(wdata.getWind().getSpeed().toString());
         Double temperature = wdata.getMain().getTemp();
         currentTemperatureLabel.setText(String.format("%.1f", temperature));
         Double feelsLikeTemperature = wdata.getMain().getFeels_like();
         feelsLikeContentLabel.setText(String.format("%.1f", feelsLikeTemperature));
-        currentLocationLabel.setText(ldata.getName());
-        airQualityContentLabel.setText(airQualityData.getList().get(0).getMain().getAqi().toString());
-
-        stream = new FileInputStream(String.format("weatherSet\\%s.png", wdata.getWeather().get(0).getDescription()).replace(' ', '-').replace('/', '-'));
-        Image image = new Image(stream);
+        airQualityContentLabel.setText(AirQualityData.descriptionOfQuality(airQualityData.getList().get(0).getMain().getAqi()));
+        
+        rainLabel.setText(fdata.getList().get(0).getRain() != null ? String.valueOf(fdata.getList().get(0).getRain()) : "0.0");
+        
+        try {
+            String description = wdata.getWeather().get(0).getDescription()
+                    .replace(' ', '-')
+                    .replace('/', '-');
+            if (description.contentEquals("sky-is-clear")) {
+                description = "clear-sky";
+            }
+            stream = new FileInputStream(String.format("weatherSet\\%s.png",description));
+            Image image = new Image(stream);
         //Creating the image view
         imageView.setImage(image);
         //Setting the image view parameters
+        } catch (FileNotFoundException e) {
+            setError();
+        }
+    }
+    
+    /**
+     * Sets icon as error in case of unforeseen description 
+     */
+    public void setError() {
+        try {
+            stream = new FileInputStream("weatherSet\\error.png");
+            Image image = new Image(stream);
+            imageView.setImage(image);
+        } catch (FileNotFoundException e) {
+            
+        }
     }
     
 }

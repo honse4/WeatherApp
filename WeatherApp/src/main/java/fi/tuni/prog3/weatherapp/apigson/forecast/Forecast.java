@@ -11,6 +11,7 @@ public class Forecast {
     private Double dt;
     private Temp temp;
     private List<Weather> weather; 
+    private Double rain;
 
     public Double getDt() {
         return dt;
@@ -36,5 +37,11 @@ public class Forecast {
         this.weather = weather;
     }
     
-    
+    public Double getRain() {
+        return rain;
+    }
+
+    public void setRain(Double rain) {
+        this.rain = rain;
+    }
 }

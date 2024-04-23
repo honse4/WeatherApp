@@ -2,9 +2,14 @@ package fi.tuni.prog3.weatherapp.components.mainview;
 
 import fi.tuni.prog3.weatherapp.apigson.forecast.Temp;
 import fi.tuni.prog3.weatherapp.apigson.weather.Weather;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -16,6 +21,8 @@ import javafx.scene.text.Font;
 public class DailyForecastColumn extends VBox{
     private Label dayLabel;
     private Label dateLabel;
+    private InputStream stream;
+    private ImageView icon;
     private Label minTemperature;
     private Label maxTemperature;
     private final static String DEGREE_SYMBOL = "\u00B0";
@@ -26,8 +33,8 @@ public class DailyForecastColumn extends VBox{
     public DailyForecastColumn() {
         getChildren().addAll(createDateLabels(), createIcon(), createTemperatureLabels());
         setSpacing(5);
-        
-        setStyle("-fx-background-color: #f0f0f0;");
+        setAlignment(Pos.TOP_CENTER);
+        setStyle("-fx-background-color: #e9e9e9;");
     }
     
     /**
@@ -52,12 +59,10 @@ public class DailyForecastColumn extends VBox{
      * Creates the weather icon representing the weather
      * @return HBox
      */
-    private HBox createIcon() {
+    private ImageView createIcon() {
         
-        HBox iconBox = new HBox();
-        iconBox.setAlignment(Pos.CENTER);
-        
-        return iconBox;
+        icon = new ImageView();
+        return icon;
     }
     
     /**
@@ -66,17 +71,17 @@ public class DailyForecastColumn extends VBox{
      */
     private VBox createTemperatureLabels() {
         Label minLabel = new Label("Min: ");
-        minLabel.setFont(new Font("Tahoma", 12));      
+        minLabel.setFont(new Font("Tahoma", 13));      
         minTemperature = new Label();
-        minTemperature.setFont(new Font("Helvetica", 12));
+        minTemperature.setFont(new Font("Helvetica", 13));
         
         HBox minBox = new HBox(minLabel, minTemperature);
         minBox.setAlignment(Pos.CENTER);
         
         Label maxLabel = new Label("Max: ");
-        maxLabel.setFont(new Font("Tahoma", 12));
+        maxLabel.setFont(new Font("Tahoma", 13));
         maxTemperature = new Label();
-        maxTemperature.setFont(new Font("Helvetica", 12));
+        maxTemperature.setFont(new Font("Helvetica", 13));
         
         HBox maxBox = new HBox(maxLabel, maxTemperature);
         maxBox.setAlignment(Pos.CENTER);
@@ -112,7 +117,37 @@ public class DailyForecastColumn extends VBox{
      * Sets the icon based on the weather
      * @param weather Weather object containing weather data
      */
-    public void setIcon(Weather weather) {
+    public void setIcon(Weather weather)  {
+        try {
+            String description = weather.getDescription().replace(' ', '-').replace('/', '-');
+            if (description.contentEquals("sky-is-clear")) {
+                description = "clear-sky";
+            }
+            stream = new FileInputStream(String.format("weatherSet\\%s.png",description));
+            Image image = new Image(stream);
+            icon.setImage(image);
+            icon.setFitHeight(60);
+            icon.setFitWidth(60);           
+        } catch (FileNotFoundException e) {
+                setError();
+                
+        }
         
+        
+    }
+    
+    /**
+     * Sets icon as error in case of unforeseen description 
+     */
+    public void setError() {
+        try {
+            stream = new FileInputStream("weatherSet\\error.png");
+            Image image = new Image(stream);
+            icon.setImage(image);
+            icon.setFitHeight(50);
+            icon.setFitWidth(50);
+        } catch (FileNotFoundException e) {
+            
+        }
     }
 }

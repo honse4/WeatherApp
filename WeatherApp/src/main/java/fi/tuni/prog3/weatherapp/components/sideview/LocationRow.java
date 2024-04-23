@@ -28,6 +28,7 @@ public class LocationRow extends HBox {
         
         Label stateName = new Label(state);
         stateName.setFont(new Font("Helvetica", 14));
+        stateName.setMinWidth(75);
         
         getChildren().addAll(placeName, stateName);
          
@@ -38,7 +39,7 @@ public class LocationRow extends HBox {
         getChildren().addAll(spacer,delete);
         
         
-        setSpacing(100);
+        setSpacing(80);
         setId(name + state);
         
         setMinHeight(35);

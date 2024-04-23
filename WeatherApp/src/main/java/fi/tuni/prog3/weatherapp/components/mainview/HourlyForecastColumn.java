@@ -3,10 +3,14 @@ package fi.tuni.prog3.weatherapp.components.mainview;
 import fi.tuni.prog3.weatherapp.apigson.weather.Main;
 import fi.tuni.prog3.weatherapp.apigson.weather.Weather;
 import fi.tuni.prog3.weatherapp.apigson.weather.Wind;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -15,104 +19,46 @@ import javafx.scene.text.Font;
  * @author vasav
  */
 public class HourlyForecastColumn extends VBox{
-    private Label timeLabel;
-    private Label tempLabel;
-    private Label windLabel;
-    private Label rainLabel;
-    private Label humidityLabel;
+    private final Label timeLabel;
+    private final Label tempLabel;
+    private final Label windLabel;
+    private final Label rainLabel;
+    private final Label humidityLabel;
+    private InputStream stream;
+    private final ImageView icon;
     private final static String DEGREE_SYMBOL = "\u00B0";
     
-    public HourlyForecastColumn() {
-        getChildren().addAll(createTimeLabel(), createIcon(), createTempLabel(),
-                createWindLabel(), createRainLabel(), createHumidityLabel());
-        setSpacing(10);
-        
-        setStyle("-fx-background-color: #f0f0f0;");
-        setMinSize(50, 175);
-    }
-    
     /**
-     * Creates the label having the time
-     * @return HBox
+     * Constructor
      */
-    private HBox createTimeLabel() {
+    public HourlyForecastColumn() {
         timeLabel = new Label();
         timeLabel.setFont(new Font("Helvetica", 14));
-                    
-        HBox dateBox = new HBox( timeLabel);
-        dateBox.setAlignment(Pos.CENTER);
         
-        return dateBox;
-    }
-    
-    /**
-     * Creates the weather icon representing the weather
-     * @return HBox
-     */
-    private HBox createIcon() {
-        
-        HBox iconBox = new HBox();
-        iconBox.setAlignment(Pos.CENTER);
-        
-        return iconBox;
-    }
-    
-    /**
-     * Creates the label having the temperature
-     * @return HBox
-     */
-    private HBox createTempLabel() {
+        Font font = new Font("Tahoma", 13);
         tempLabel = new Label();
-        tempLabel.setFont(new Font("Tahoma", 12));
+        tempLabel.setFont(font);
         
-        HBox tempBox = new HBox(tempLabel);
-        tempBox.setAlignment(Pos.CENTER);
-        
-        return tempBox;        
-    }
-    
-    /**
-     * Creates the label having the wind
-     * @return HBox
-     */
-    private HBox createWindLabel() {
         windLabel = new Label();
-        windLabel.setFont(new Font("Tahoma", 12));
+        windLabel.setFont(font);
         
-        HBox windBox = new HBox(windLabel);
-        windBox.setAlignment(Pos.CENTER);
-        
-        return windBox;        
-    }
-    
-    /**
-     * Creates the label having the rain
-     * @return HBox
-     */
-    private HBox createRainLabel() {
         rainLabel = new Label();
-        rainLabel.setFont(new Font("Tahoma", 12));
+        rainLabel.setFont(font);
         
-        HBox rainBox = new HBox(rainLabel);
-        rainBox.setAlignment(Pos.CENTER);
-        
-        return rainBox;        
-    }
-    
-    /**
-     * Creates the label having the humidity
-     * @return HBox
-     */
-    private HBox createHumidityLabel() {
         humidityLabel = new Label();
-        humidityLabel.setFont(new Font("Tahoma", 12));
+        humidityLabel.setFont(font);
         
-        HBox humidityBox = new HBox(humidityLabel);
-        humidityBox.setAlignment(Pos.CENTER);
+        icon = new ImageView();
         
-        return humidityBox;        
+        getChildren().addAll(timeLabel, icon, tempLabel,
+                windLabel, rainLabel, humidityLabel);
+        setSpacing(18);
+        setStyle("-fx-background-color: #e9e9e9;");
+        setMinSize(50, 175);
+        setAlignment(Pos.TOP_CENTER);
     }
     
+        
     /**
      * Sets the day and date
      * @param time LocalTIme object
@@ -125,18 +71,44 @@ public class HourlyForecastColumn extends VBox{
      * Sets the icon based on the weather
      * @param weather Weather object containing weather data
      */
-    public void setIcon(Weather weather) {
-        
+    public void setIcon(Weather weather)  {
+        try {
+            String description = weather.getDescription().replace(' ', '-').replace('/', '-');
+            if (description.contentEquals("sky-is-clear")) {
+                description = "clear-sky";
+            }
+            stream = new FileInputStream(String.format("weatherSet\\%s.png",description));
+            Image image = new Image(stream);
+            icon.setImage(image);
+            icon.setFitHeight(40);
+            icon.setFitWidth(40);   
+               
+        } catch (FileNotFoundException e) {
+                setError();          
+        } 
+    }
+    
+    /**
+     * Sets icon as error in case of unforeseen description 
+     */
+    public void setError() {
+        try {
+            stream = new FileInputStream("weatherSet\\error.png");
+            Image image = new Image(stream);
+            icon.setImage(image);
+            icon.setFitHeight(30);
+            icon.setFitWidth(30);
+        } catch (FileNotFoundException e) {
+            
+        }
     }
     
     /**
      * Sets the temperatures along with the right unit
      * @param main Main object holding temperatures
-     * @param unit String containing name of the unit
      */
-    public void setTemp(Main main, String unit) { 
-        String suffix = " " + DEGREE_SYMBOL + (unit.contentEquals("metric") ? "C" : "F");
-        tempLabel.setText(String.valueOf(main.getTemp()) + suffix);
+    public void setTemp(Main main) { 
+        tempLabel.setText(String.valueOf(main.getTemp()) + DEGREE_SYMBOL);
 
     }
     

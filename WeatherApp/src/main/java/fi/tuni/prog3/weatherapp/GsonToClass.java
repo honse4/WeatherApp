@@ -99,21 +99,17 @@ public class GsonToClass {
     * @return Preferences
     */
     public Preferences makePreferencesObject(String jsonData) {
-
+        Preferences preferences = new Preferences();
+        preferences.setCurrentLocation(locationSearch("Tampere"));
+        preferences.setFavouriteLocations(new ArrayList());
+        preferences.setLocationSearchHistory(new ArrayList());
         try {
             if (jsonData == null || jsonData.isBlank()) {
-               Preferences preferences = new Preferences();
-               preferences.setCurrentLocation(locationSearch("Tampere"));
-               preferences.setFavouriteLocations(new ArrayList());
-               preferences.setLocationSearchHistory(new ArrayList());
+               
                return preferences;
             }
             return this.gson.fromJson(jsonData, Preferences.class);
         } catch (JsonSyntaxException e) {
-            Preferences preferences = new Preferences();
-            preferences.setCurrentLocation(locationSearch("Tampere"));
-            preferences.setFavouriteLocations(new ArrayList());
-            preferences.setLocationSearchHistory(new ArrayList());
             return preferences;
         }
         
