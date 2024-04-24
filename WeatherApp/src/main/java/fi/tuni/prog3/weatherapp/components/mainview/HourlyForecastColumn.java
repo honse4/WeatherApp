@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
- *
+ * Represents a single column which displays one hours forecast
  * @author vasav
  */
 public class HourlyForecastColumn extends VBox{

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class to get data using gson in the right format
  * @author vasav
  */
 public class GsonToClass {
@@ -105,11 +105,12 @@ public class GsonToClass {
         preferences.setLocationSearchHistory(new ArrayList());
         try {
             if (jsonData == null || jsonData.isBlank()) {
-               
+               // No file or empty file
                return preferences;
             }
             return this.gson.fromJson(jsonData, Preferences.class);
         } catch (JsonSyntaxException | NumberFormatException e) {
+            // Error reading the file
             return preferences;
         }
     }

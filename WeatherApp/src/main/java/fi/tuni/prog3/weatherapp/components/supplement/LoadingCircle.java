@@ -8,7 +8,7 @@ import javafx.scene.shape.Arc;
 import javafx.util.Duration;
 
 /**
- *
+ * Animation class to signify loading
  * @author vasav
  */
 public class LoadingCircle extends Arc{

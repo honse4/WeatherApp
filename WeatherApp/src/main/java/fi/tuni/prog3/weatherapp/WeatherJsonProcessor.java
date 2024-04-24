@@ -54,15 +54,22 @@ public class WeatherJsonProcessor implements iReadAndWriteToFile {
             writer.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
     }
     
+    /**
+     * Gets the preferences attribute
+     * @return Preferences
+     */
     public Preferences getPreferences() {
         return preferences;
     }
 
+    /**
+     * Sets the preferences attribute
+     * @param preferences Preferences object
+     */
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
     }

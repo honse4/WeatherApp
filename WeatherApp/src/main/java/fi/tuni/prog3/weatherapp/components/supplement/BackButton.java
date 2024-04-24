@@ -5,7 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.shape.SVGPath;
 
 /**
- *
+ * Class containing stylings for a commonly usde buttin
  * @author vasav
  */
 public class BackButton extends Button{

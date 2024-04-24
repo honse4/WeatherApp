@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
 /**
- *
+ * Class to change units
  * @author vasav
  */
 public class Units extends HBox{
@@ -56,7 +56,7 @@ public class Units extends HBox{
         getChildren().add(loader);
         loader.play();
         
-        //
+        // Uses tasks and threads for asynchronous functioning
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
@@ -69,7 +69,6 @@ public class Units extends HBox{
                 if (result) {
                     changeMetric.setText(isMetric ? "Metric" : "Imperial");
                     isMetric = !isMetric;
-                    //getChildren().remove(message);
                 } else {
                     getChildren().add(message);
                     message.setText("An error occured");

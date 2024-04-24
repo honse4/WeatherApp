@@ -53,6 +53,10 @@ public class WeatherApp extends Application {
     private final HourlyForecastDisplay hourlyForecast;
     private HourlyForecastData hourlyForecastData;
     
+    /**
+     * Constructor
+     * @throws Exception 
+     */
     public WeatherApp() throws Exception {
         this.dataGetter = new GsonToClass();
         this.unit = "metric";
@@ -64,6 +68,11 @@ public class WeatherApp extends Application {
         this.currentWeatherBox = new CurrentWeatherDisplay();
     }
 
+    /**
+     * Initialises the gui
+     * @param stage Primary Stage
+     * @throws FileNotFoundException 
+     */
     @Override
     public void start(Stage stage) throws FileNotFoundException {
 
@@ -83,6 +92,10 @@ public class WeatherApp extends Application {
         stage.show();
     }
 
+    /**
+     * Main 
+     * @param args arguments
+     */
     public static void main(String[] args) {
         launch();
     }
@@ -189,6 +202,13 @@ public class WeatherApp extends Application {
         return searchBar;
     }
     
+    /**
+     * Creates the button which switches to the forecast charts
+     * @param stage Primary stage
+     * @param scene The main scene
+     * @param main This WeatherApp class
+     * @return Button
+     */
     public Button getForecastChart(Stage stage, Scene scene, WeatherApp main) {
         
         Button chartButton = new Button("Forecast charts");
@@ -207,7 +227,10 @@ public class WeatherApp extends Application {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    
+    /**
+     * Calls when the gui is closed
+     * @throws Exception 
+     */
     @Override
     public void stop() throws Exception {
         // executed when the application shuts down
@@ -231,6 +254,7 @@ public class WeatherApp extends Application {
             preferences.setCurrentLocation(locationData);
             this.hourlyForecastData = hForecastData;
             
+            // Change values in the ui
             Platform.runLater(() -> {
                 currentWeatherBox.updateValues(weatherData, airQualityData, forecastData, unit);
                 changeStarColour();
@@ -245,11 +269,6 @@ public class WeatherApp extends Application {
             return false;
         }
     }
-    
-//    public LocationData getCurrentLocation() {
-//        return preferences.getCurrentLocation();
-//    }
-
     
     /**
      * Checks if the current location is a part of the favourites

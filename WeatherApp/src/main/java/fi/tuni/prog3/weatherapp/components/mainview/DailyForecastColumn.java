@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 /**
- *
+ * Class to represent a single column where one day's forecast is shown
  * @author vasav
  */
 public class DailyForecastColumn extends VBox{

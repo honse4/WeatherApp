@@ -20,7 +20,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
- *
+ * Class displays the search history
  * @author vasav
  */
 public class SearchHistory extends VBox {
@@ -165,7 +165,7 @@ public class SearchHistory extends VBox {
         loader.play();
         getChildren().add(2, message);
         
-        //
+        // Uses tasks and threads for asynchronous functioning
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {

@@ -12,7 +12,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
 /**
- *
+ * Class to display the daily forecast
  * @author vasav
  */
 public class DailyForecast extends GridPane {
@@ -27,6 +27,7 @@ public class DailyForecast extends GridPane {
         setGridLinesVisible(true);
         setPadding(new Insets(5,0,5,0)); 
         
+        // Setting the column width and adding columns
         for (int i = 0; i<5; i++) {       
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setPercentWidth(20);

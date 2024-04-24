@@ -11,7 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 
 /**
- *
+ * Class that displays hourly forecast
  * @author vasav
  */
 public class HourlyForecastDisplay extends ScrollPane {

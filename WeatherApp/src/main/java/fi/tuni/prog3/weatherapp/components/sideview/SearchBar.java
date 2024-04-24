@@ -21,7 +21,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
- *
+ * Class that lets user search and displays favourites
  * @author vasav
  */
 public class SearchBar extends VBox {
@@ -78,6 +78,7 @@ public class SearchBar extends VBox {
         getChildren().addAll(back, getVBox(),favouritesContainer);
         setSpacing(50);
         
+        // Can use enter to search instead of the button
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 if(!isLoading) {
@@ -89,7 +90,7 @@ public class SearchBar extends VBox {
     }
     
     /**
-     * Adds the top row to a VBox
+     * Adds the top row to the VBox
      * @return VBox
      */
     private VBox getVBox() {
@@ -156,7 +157,7 @@ public class SearchBar extends VBox {
         favouritesContainer.getChildren().add(0, loader);
         loader.play();
         
-        //
+        // Uses tasks and threads for asynchronous functioning
         Task<Boolean> task = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {

@@ -7,12 +7,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- *
+ * Class that makes the api calls to the url
  * @author vasav
  */
 public class WeatherApi implements iAPI{
     private final static String API_ID = "2bcb8cfeeba3f4072f586ab0d2b40b2b";
     
+    /**
+     * Empty constructor
+     */
     public WeatherApi() {}
     
     /**

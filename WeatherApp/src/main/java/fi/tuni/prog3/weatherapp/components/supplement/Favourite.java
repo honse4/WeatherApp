@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 /**
- *
+ * Class that displays a star to the user. Adds and removes favourites
  * @author vasav
  */
 public class Favourite extends Polygon {

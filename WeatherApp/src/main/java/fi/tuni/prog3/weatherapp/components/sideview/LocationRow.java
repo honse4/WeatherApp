@@ -9,7 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 
 /**
- *
+ * Class to represent one row of a location
  * @author vasav
  */
 public class LocationRow extends HBox {
