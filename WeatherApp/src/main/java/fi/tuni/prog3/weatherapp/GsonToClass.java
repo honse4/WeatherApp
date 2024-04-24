@@ -109,9 +109,8 @@ public class GsonToClass {
                return preferences;
             }
             return this.gson.fromJson(jsonData, Preferences.class);
-        } catch (JsonSyntaxException e) {
+        } catch (JsonSyntaxException | NumberFormatException e) {
             return preferences;
         }
-        
     }
 }
