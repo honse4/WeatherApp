@@ -24,8 +24,8 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 /**
- *
- * @author user
+ * Class for generating the current weather display
+ * @author Onur
  */
 public class CurrentWeatherDisplay extends VBox {
     
@@ -43,6 +43,10 @@ public class CurrentWeatherDisplay extends VBox {
     
     InputStream stream;
     ImageView imageView;
+    /**
+     * Generates the UI component which displays the current weather condition
+     * @throws FileNotFoundException 
+     */
     
     public CurrentWeatherDisplay() throws FileNotFoundException {
         Font boldFont = Font.font("Verdana", FontWeight.BOLD, FontPosture.REGULAR, 14);
@@ -121,7 +125,14 @@ public class CurrentWeatherDisplay extends VBox {
         getChildren().addAll( currentWeatherLabel, currentTemperatureBox, feelsLikeBox, weatherDetailsBox);
         setAlignment(Pos.TOP_CENTER);
     }
-            
+    
+     /**
+     * Sets the min and max temperatures along with the right unit
+     * @param wdata WeatherData object holding weather information
+     * @param airQualityData AirQualityData object containing air quality information
+     * @param fdata ForecastData object containing forecast information
+     * @param unit String containing which unit is chosen by the user
+     */
     public void updateValues(WeatherData wdata, AirQualityData airQualityData, ForecastData fdata,  String unit)  {
         windLabel.setText(wdata.getWind().getSpeed().toString());
         
