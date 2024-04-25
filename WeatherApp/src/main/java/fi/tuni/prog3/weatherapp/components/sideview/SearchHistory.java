@@ -107,6 +107,7 @@ public class SearchHistory extends VBox {
      */
     public void addLocation(LocationData data) { 
         if (!preferences.getLocationSearchHistory().isEmpty() ) {
+            // Deletes the locaiton and readds it to the top
             deleteLocation(data);
             preferences.addLocationIntoHistory(data);
         } else {
@@ -129,6 +130,7 @@ public class SearchHistory extends VBox {
             } 
         });
         
+        //Uses Platform to ensure all updates happen on the javafx thread
         Platform.runLater(() -> {
             list.getChildren().removeIf(node -> node instanceof Label);
             list.getChildren().add(0, row);

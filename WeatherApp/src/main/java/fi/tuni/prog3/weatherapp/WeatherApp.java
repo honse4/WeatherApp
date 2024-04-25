@@ -254,7 +254,7 @@ public class WeatherApp extends Application {
             preferences.setCurrentLocation(locationData);
             this.hourlyForecastData = hForecastData;
             
-            // Change values in the ui
+            // Change values in the ui. Uses Platform to ensure all updates happen on the javafx thread
             Platform.runLater(() -> {
                 currentWeatherBox.updateValues(weatherData, airQualityData, forecastData, unit);
                 changeStarColour();
