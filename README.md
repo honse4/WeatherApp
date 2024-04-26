@@ -11,6 +11,6 @@ fi.tuni.prog3.weatherapp.preferencesgson: Contains the gson class to work with f
 fi.tuni.prog3.weatherapp.components: Contains the classes which are diaplyed on the gui, which the user can interact with. The package itself is split into 3 packages based on their relevance to the user.
 
 
-Documentation is present in the Documentation floder in the root directory
+Documentation is present in the Documentation folder in the root directory
 
 Group 3546 - Onur Sertgil, Ville Kivioja, Vasav Juyal
