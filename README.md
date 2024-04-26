@@ -1,5 +1,9 @@
 # WeatherApp project
 
+This project aims to make an application to display the weather in java using the javafx library. It also makes use of the gson library and api data from OpenWeatherMap organisation. 
+
+The program allows a user to search for different locations and it diaplays a variety of information regarding weather data for that location, using different metrics and some charts along with it.
+
 The code is split into 4 packages. 
 
 fi.tuni.prog3.weatherapp: The main package, contains all the non-gui classes(Except for WeatherApp). All the api and file processing work happens here.
