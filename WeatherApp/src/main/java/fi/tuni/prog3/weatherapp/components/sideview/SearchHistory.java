@@ -118,6 +118,7 @@ public class SearchHistory extends VBox {
         
         Button delete = new Button("X");
         delete.setOnAction(e -> {
+            // Prevent actions when loading
             if(!isLoading) {
                 deleteLocation(data);
             }
@@ -125,6 +126,7 @@ public class SearchHistory extends VBox {
         
         LocationRow row = new LocationRow(data.getName(), data.getState(), delete);
         row.setOnMouseClicked(e -> {
+            // Prevent actions when loading
             if (!isLoading) {
                 onClick(data.getName());
             } 
@@ -145,6 +147,7 @@ public class SearchHistory extends VBox {
     private void deleteLocation(LocationData data) {
         preferences.deleteLocationFromHistory(data);
         
+        //Uses Platform to ensure all updates happen on the javafx thread
         Platform.runLater(() -> {
             list.getChildren().removeIf(node -> node.getId().equals(data.getName()+data.getState()));
             if (list.getChildren().isEmpty()) {
@@ -161,6 +164,7 @@ public class SearchHistory extends VBox {
      */
     private void onClick(String search) {
         isLoading = true;
+        // Removes in case there was an error messag described
         getChildren().removeIf(node -> node == message);
         message.getChildren().removeIf(node -> node instanceof Label);
         message.getChildren().add(loader);

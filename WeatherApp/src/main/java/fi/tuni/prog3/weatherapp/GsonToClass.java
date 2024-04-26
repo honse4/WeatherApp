@@ -108,7 +108,11 @@ public class GsonToClass {
                // No file or empty file
                return preferences;
             }
-            return this.gson.fromJson(jsonData, Preferences.class);
+            Preferences pref = this.gson.fromJson(jsonData, Preferences.class);
+            if (pref.getCurrentLocation() == null){
+                return preferences;
+            }
+            return pref;
         } catch (JsonSyntaxException | NumberFormatException e) {
             // Error reading the file
             return preferences;

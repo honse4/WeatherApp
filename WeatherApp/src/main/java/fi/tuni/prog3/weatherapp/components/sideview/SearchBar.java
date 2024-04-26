@@ -81,6 +81,7 @@ public class SearchBar extends VBox {
         // Can use enter to search instead of the button
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
+                // Prevent actions when loading
                 if(!isLoading) {
                     String search = searchbar.getText();
                     onClick(search);
@@ -107,6 +108,7 @@ public class SearchBar extends VBox {
         searchButton.setStyle("-fx-background-radius: 0 20 20 0;");
         
         searchButton.setOnAction(e -> {
+            // Prevent actions when loading
             if(!isLoading) {
                 String search = searchbar.getText();
                 onClick(search);
@@ -224,12 +226,18 @@ public class SearchBar extends VBox {
          
         Button delete = new Button("X");
         delete.setOnAction(e -> {
-            deleteFavourite(data);
+            // Prevent actions when loading
+            if(!isLoading) {
+                deleteFavourite(data);
+            }
         });
         
         LocationRow row = new LocationRow(data.getName(), data.getState(), delete);
         row.setOnMouseClicked(e -> {
-            onClick(data.getName());
+            // Prevent actions when loading
+            if(!isLoading) {
+                onClick(data.getName());
+            }
         });
             
         favourites.getChildren().add(0, row);
