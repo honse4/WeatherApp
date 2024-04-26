@@ -1,25 +1,16 @@
-# Ohjelmointi 3 projektin tietovarasto
+# WeatherApp project
 
-Tämä on ryhmäsi yhteinen tietovarasto projektin tekemistä varten. Varasto sisältää yksinkertaisen
-Maven-muotoisen JavaFX-projektin.
+The code is split into 4 packages. 
 
-Huomaa, että nyt projektissa on useita jäseniä ja tekemisesi vaikuttaa muiden työhön.
+fi.tuni.prog3.weatherapp: The main package, contains all the non-gui classes(Except for WeatherApp). All the api and file processing work happens here.
 
-Liitä harjoitustyön materiaalien etätietovarasto 
-(https://course-gitlab.tuni.fi/compcs140-spring2024/group_template_project)
-paikalliseen tietovarastoosi remoteksi, jotta voit ladata mahdollisia muutoksia kurssin tarjoamaan materiaaliin.
+fi.tuni.prog3.weatherapp.apigson: Contains all the gson classes to process the json data received from the api.
 
-Tätä tiedostoa saa (ja on hyväkin) muuttaa projektin aloittamisen jälkeen.
+fi.tuni.prog3.weatherapp.preferencesgson: Contains the gson class to work with file input and output.
 
-# Programming 3 project repository
+fi.tuni.prog3.weatherapp.components: Contains the classes which are diaplyed on the gui, which the user can interact with. The package itself is split into 3 packages based on their relevance to the user.
 
-This is the repository for implementing the course project for your group. It contains a simple JavaFX-Maven
-project.
 
-Note that your project now has several members and what you do impacts other's work.
+Documentation is present in the Documentation floder in the root directory
 
-Add the remote repository for the project material
-(https://course-gitlab.tuni.fi/compcs140-spring2024/group_template_project)
-as a remote to your local repository to fetch possible updates to the code provided by the course.
-
-You are allowed (and probably should) make changes to this file after you have started your project.
+Group 3546 - Onur Sertgil, Ville Kivioja, Vasav Juyal
