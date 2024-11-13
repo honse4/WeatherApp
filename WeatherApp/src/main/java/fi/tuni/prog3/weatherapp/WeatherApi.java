@@ -11,7 +11,7 @@ import java.net.URL;
  * @author vasav
  */
 public class WeatherApi implements iAPI{
-    private final static String API_ID = "2bcb8cfeeba3f4072f586ab0d2b40b2b";
+    private final static String API_ID = API_ID;
     
     /**
      * Empty constructor
